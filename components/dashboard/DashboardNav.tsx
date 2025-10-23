@@ -17,8 +17,6 @@ export default function DashboardNav() {
     <nav className="glass overflow-x-auto rounded-full border border-white/10 bg-black/40 shadow-innerGlow">
       <ul className="flex w-full min-w-full flex-wrap items-center justify-between gap-2 p-2 sm:gap-3">
         {links.map((link) => {
-          const isOverview = link.href === '/dashboard';
-          const isActive = isOverview ? pathname === '/dashboard' : pathname.startsWith(link.href);
           const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
           return (
             <li key={link.href}>
