@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const links = [
-  { href: '/dashboard', label: 'Overview' },
+  { href: '/dashboard', label: 'Overview', exact: true },
   { href: '/dashboard/vehicles', label: 'Vehicles' },
   { href: '/dashboard/leads', label: 'Leads' },
   { href: '/dashboard/bookings', label: 'Bookings' }
@@ -19,6 +19,7 @@ export default function DashboardNav() {
         {links.map((link) => {
           const isOverview = link.href === '/dashboard';
           const isActive = isOverview ? pathname === '/dashboard' : pathname.startsWith(link.href);
+          const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
           return (
             <li key={link.href}>
               <Link
