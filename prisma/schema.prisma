@@ -34,7 +34,11 @@ model Vehicle {
   @@index([make, model, year, price], name: "Vehicle_make_model_year_price_idx")
 }
 
-enum LeadType { TEST_DRIVE GENERAL OFFER }
+enum LeadType {
+  TEST_DRIVE
+  GENERAL
+  OFFER
+}
 model Lead {
   id        String   @id @default(cuid())
   type      LeadType
@@ -49,7 +53,12 @@ model Lead {
   @@index([vehicleId])
 }
 
-enum BookingStatus { PENDING SCHEDULED COMPLETED CANCELLED }
+enum BookingStatus {
+  PENDING
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
 model Booking {
   id        String         @id @default(cuid())
   vehicleId String?

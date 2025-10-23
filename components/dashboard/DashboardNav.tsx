@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const links = [
-  { href: '/dashboard', label: 'Overview' },
+  { href: '/dashboard', label: 'Overview', exact: true },
   { href: '/dashboard/vehicles', label: 'Vehicles' },
   { href: '/dashboard/leads', label: 'Leads' },
   { href: '/dashboard/bookings', label: 'Bookings' }
@@ -17,7 +17,7 @@ export default function DashboardNav() {
     <nav className="glass overflow-hidden rounded-full border border-white/10 bg-black/40 shadow-innerGlow">
       <ul className="flex flex-wrap items-center justify-between gap-2 p-2 sm:gap-3">
         {links.map((link) => {
-          const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+          const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
           return (
             <li key={link.href}>
               <Link

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, Poppins } from 'next/font/google';
+import { Manrope, Poppins } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { ReactNode } from 'react';
 import Script from 'next/script';
 
-const heading = Space_Grotesk({
+const heading = Manrope({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-heading'
