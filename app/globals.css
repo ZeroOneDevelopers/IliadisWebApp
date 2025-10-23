@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-graphite text-silver font-body antialiased;
+}
+
+a {
+  @apply text-silver transition-colors duration-300;
+}
+
+a:hover {
+  @apply text-white;
+}
+
+.section-padding {
+  @apply px-6 py-20 md:px-12 lg:px-24;
+}
+
+.glass {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10;
+}
+
+.card-hover {
+  @apply transition-all duration-500 ease-out;
+}
+
+.card-hover:hover {
+  @apply -translate-y-2 shadow-glow border-white/30;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+}
+
+.video-overlay {
+  background: radial-gradient(circle at 20% 20%, rgba(231, 233, 238, 0.08), transparent 55%),
+    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
+    linear-gradient(115deg, rgba(11, 12, 16, 0.8) 0%, rgba(11, 12, 16, 0.2) 100%);
+}
