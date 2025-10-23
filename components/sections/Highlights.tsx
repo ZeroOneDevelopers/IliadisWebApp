@@ -1,3 +1,4 @@
+'use client';
 import { motion } from 'framer-motion';
 import { SparklesIcon, RocketLaunchIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 
