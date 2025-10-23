@@ -9,7 +9,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <section className="section-padding">
-      <div className="mx-auto max-w-6xl space-y-10">
+      <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Administrator</p>

@@ -88,7 +88,7 @@ export default function TestDriveClient({ vehicles }: Props) {
   }
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[1.2fr_1fr]">
+    <div className="mx-auto grid max-w-5xl gap-12 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr]">
       <div className="glass rounded-3xl border border-white/10 bg-black/30 p-10 shadow-innerGlow">
         <p className="text-xs uppercase tracking-[0.55em] text-silver/60">Book A Private Experience</p>
         <h1 className="mt-4 font-heading text-4xl text-white">Test Drive Concierge</h1>
@@ -109,7 +109,7 @@ export default function TestDriveClient({ vehicles }: Props) {
                 value={formState[input.field as keyof FormState] as string}
                 onChange={(event) => setFormState((prev) => ({ ...prev, [input.field]: event.target.value }))}
                 placeholder={input.placeholder}
-                className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none"
+                className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none min-h-12"
               />
             </div>
           ))}
@@ -127,7 +127,7 @@ export default function TestDriveClient({ vehicles }: Props) {
                 }));
               }}
               disabled={!hasVehicles}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 min-h-12"
             >
               <option value="" disabled>
                 {hasVehicles ? 'Select a vehicle' : 'Inventory required'}
@@ -147,7 +147,7 @@ export default function TestDriveClient({ vehicles }: Props) {
               value={formState.preferredDate}
               onChange={(event) => setFormState((prev) => ({ ...prev, preferredDate: event.target.value }))}
               disabled={!hasVehicles}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
             />
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">

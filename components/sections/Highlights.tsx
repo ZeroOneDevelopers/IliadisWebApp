@@ -23,7 +23,7 @@ const items = [
 export default function Highlights() {
   return (
     <section className="section-padding">
-      <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-3">
         {items.map((item, index) => (
           <motion.div
             key={item.title}

@@ -25,7 +25,7 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="fixed inset-x-0 top-0 z-50 bg-graphite/80 backdrop-blur-lg"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-12">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-12">
         <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
           <div className="relative h-10 w-36">
             <Image src="/images/iliadis-logo.svg" alt="Iliadis Executive Cars" fill priority className="object-contain" />
@@ -35,7 +35,12 @@ export default function Navbar() {
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link key={link.href} href={link.href} className="relative">
+              <Link
+                key={link.href}
+                href={link.href}
+                className="relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                aria-current={isActive ? 'page' : undefined}
+              >
                 <span className={`transition-colors duration-300 ${isActive ? 'text-white' : 'text-silver/80 hover:text-white'}`}>
                   {link.name}
                 </span>
@@ -50,9 +55,10 @@ export default function Navbar() {
           })}
         </nav>
         <button
-          className="md:hidden"
+          className="md:hidden rounded-full border border-white/20 p-2 text-white transition hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           onClick={() => setOpen((prev) => !prev)}
           aria-label="Toggle navigation"
+          aria-expanded={open}
         >
           {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
         </button>
@@ -72,7 +78,8 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className={`block border-b border-white/5 pb-4 ${isActive ? 'text-white' : 'text-silver/80'}`}
+                  className={`block border-b border-white/5 pb-4 transition ${isActive ? 'text-white' : 'text-silver/80 hover:text-white'}`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   {link.name}
                 </Link>

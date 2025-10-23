@@ -14,17 +14,19 @@ export default function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="glass overflow-hidden rounded-full border border-white/10 bg-black/40 shadow-innerGlow">
-      <ul className="flex flex-wrap items-center justify-between gap-2 p-2 sm:gap-3">
+    <nav className="glass overflow-x-auto rounded-full border border-white/10 bg-black/40 shadow-innerGlow">
+      <ul className="flex w-full min-w-full flex-wrap items-center justify-between gap-2 p-2 sm:gap-3">
         {links.map((link) => {
-          const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
+          const isOverview = link.href === '/dashboard';
+          const isActive = isOverview ? pathname === '/dashboard' : pathname.startsWith(link.href);
           return (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`block rounded-full px-5 py-2 text-xs uppercase tracking-[0.35em] transition ${
+                className={`block rounded-full px-5 py-2 text-xs uppercase tracking-[0.35em] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
                   isActive ? 'bg-white/20 text-white shadow-glow' : 'text-silver/70 hover:text-white'
                 }`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 {link.label}
               </Link>

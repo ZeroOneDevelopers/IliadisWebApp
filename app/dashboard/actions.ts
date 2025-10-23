@@ -94,6 +94,7 @@ export async function upsertVehicle(data: VehiclePayload) {
   }
 
   revalidatePath('/showroom');
+  revalidatePath('/');
   revalidatePath('/dashboard/vehicles');
   revalidatePath('/dashboard');
 }
@@ -104,6 +105,7 @@ export async function deleteVehicle(id: string) {
   await prisma.vehicle.delete({ where: { id } });
 
   revalidatePath('/showroom');
+  revalidatePath('/');
   revalidatePath('/dashboard/vehicles');
   revalidatePath('/dashboard');
 }
@@ -117,6 +119,7 @@ export async function toggleVehicleFeatured(id: string, featured: boolean) {
   });
 
   revalidatePath('/showroom');
+  revalidatePath('/');
   revalidatePath('/dashboard/vehicles');
   revalidatePath('/dashboard');
 }

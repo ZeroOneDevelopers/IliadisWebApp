@@ -18,7 +18,7 @@ export default async function ShowroomPage() {
 
   return (
     <section className="section-padding">
-      <div className="mx-auto max-w-6xl space-y-12">
+      <div className="mx-auto max-w-7xl space-y-12 px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 text-center">
           <p className="text-xs uppercase tracking-[0.55em] text-silver/60">The Digital Atelier</p>
           <h1 className="font-heading text-4xl text-white md:text-5xl">Showroom Collection</h1>
