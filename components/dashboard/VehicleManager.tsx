@@ -1,10 +1,12 @@
 'use client';
 
+import { Fragment, useEffect, useMemo, useState, useTransition } from 'react';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 import type { Vehicle } from '@prisma/client';
 import GlowButton from '@/components/ui/GlowButton';
 import { deleteVehicle, toggleVehicleFeatured, upsertVehicle } from '@/app/dashboard/actions';
 import ImportForm from '@/app/dashboard/(admin)/vehicles/ImportForm';
+import { Dialog, Transition } from '@headlessui/react';
 
 type Props = { vehicles: Vehicle[] };
 type FormState = Omit<Vehicle, 'createdAt' | 'updatedAt'>;
@@ -42,6 +44,12 @@ export default function VehicleManager({ vehicles }: Props) {
   const [filterFeatured, setFilterFeatured] = useState<'ALL' | 'FEATURED'>('ALL');
   const [search, setSearch] = useState('');
 
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previous;
   // lock body scroll όταν το modal είναι ανοιχτό
   useEffect(() => {
     if (!isModalOpen) return;
@@ -170,10 +178,11 @@ export default function VehicleManager({ vehicles }: Props) {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search inventory"
-            className="w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-sm"
+            className="w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-sm min-h-12"
           />
           <ImportForm />
         </div>
+        <div className="mt-6 hidden overflow-x-auto sm:block">
 
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
@@ -215,14 +224,14 @@ export default function VehicleManager({ vehicles }: Props) {
                       <button
                         type="button"
                         onClick={() => openEditModal(vehicle)}
-                        className="text-xs uppercase tracking-[0.3em] text-silver/70 hover:text-white"
+                        className="text-xs uppercase tracking-[0.3em] text-silver/70 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(vehicle.id)}
-                        className="text-xs uppercase tracking-[0.3em] text-rose-400 hover:text-rose-200"
+                        className="text-xs uppercase tracking-[0.3em] text-rose-400 transition hover:text-rose-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-200/60"
                       >
                         Delete
                       </button>
@@ -237,8 +246,175 @@ export default function VehicleManager({ vehicles }: Props) {
             <p className="p-8 text-center text-sm text-silver/60">No vehicles found. Adjust your filters.</p>
           )}
         </div>
+        <div className="mt-6 space-y-4 sm:hidden">
+          {filteredVehicles.map((vehicle) => (
+            <div key={vehicle.id} className="rounded-3xl border border-white/10 bg-black/40 p-5 shadow-innerGlow">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="font-heading text-lg text-white">{vehicle.title}</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-silver/60">{vehicle.make} · {vehicle.model}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleToggleFeatured(vehicle)}
+                  className={`rounded-full px-4 py-1 text-xs uppercase tracking-[0.3em] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
+                    vehicle.featured ? 'bg-emerald-500/10 text-emerald-200' : 'bg-white/10 text-silver/70'
+                  }`}
+                >
+                  {vehicle.featured ? 'Featured' : 'Standard'}
+                </button>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-xs uppercase tracking-[0.3em] text-silver/60">
+                <span>Year</span>
+                <span className="text-right text-silver/70">{vehicle.year}</span>
+                <span>Price</span>
+                <span className="text-right text-silver/70">{formatEuro(vehicle.price)}</span>
+                <span>Fuel</span>
+                <span className="text-right text-silver/70">{vehicle.fuel}</span>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => openEditModal(vehicle)}
+                  className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(vehicle.id)}
+                  className="rounded-full border border-rose-400/40 px-4 py-2 text-xs uppercase tracking-[0.3em] text-rose-200 transition hover:text-rose-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-200/60"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {filteredVehicles.length === 0 && (
+          <p className="p-8 text-center text-sm text-silver/60">No vehicles found. Adjust your filters.</p>
+        )}
       </div>
 
+      <Transition show={isModalOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-[70]" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-md" />
+          </Transition.Child>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 sm:items-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-200"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-150"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="glass w-full max-w-3xl space-y-6 rounded-t-3xl border border-white/10 bg-black/60 p-6 shadow-glow max-h-[80vh] overflow-y-auto sm:rounded-3xl sm:p-8 sm:max-h-[90vh]">
+                  <div className="flex items-center justify-between gap-4">
+                    <Dialog.Title className="font-heading text-2xl text-white">{current.id ? 'Edit Vehicle' : 'New Vehicle'}</Dialog.Title>
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/60 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
+              {[
+                { name: 'title', label: 'Title', type: 'text', value: current.title },
+                { name: 'slug', label: 'Slug', type: 'text', value: current.slug },
+                { name: 'make', label: 'Make', type: 'text', value: current.make },
+                { name: 'model', label: 'Model', type: 'text', value: current.model },
+                { name: 'year', label: 'Year', type: 'number', value: current.year },
+                { name: 'price', label: 'Price', type: 'number', value: current.price },
+                { name: 'mileage', label: 'Mileage', type: 'number', value: current.mileage },
+                { name: 'engine_cc', label: 'Engine CC', type: 'number', value: current.engine_cc },
+                { name: 'hp', label: 'Horsepower', type: 'number', value: current.hp },
+                { name: 'fuel', label: 'Fuel', type: 'text', value: current.fuel },
+                { name: 'transmission', label: 'Transmission', type: 'text', value: current.transmission },
+                { name: 'body', label: 'Body Style', type: 'text', value: current.body }
+              ].map((field) => (
+                <label key={field.name} className="text-xs uppercase tracking-[0.3em] text-silver/60">
+                  {field.label}
+                  <input
+                    required
+                    name={field.name}
+                    type={field.type}
+                    defaultValue={field.value ?? ''}
+                    className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                  />
+                </label>
+              ))}
+              <label className="text-xs uppercase tracking-[0.3em] text-silver/60 md:col-span-2">
+                Description
+                <textarea
+                  name="description"
+                  defaultValue={current.description ?? ''}
+                  rows={3}
+                  className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.3em] text-silver/60">
+                Color
+                <input
+                  name="color"
+                  defaultValue={current.color ?? ''}
+                  className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.3em] text-silver/60">
+                Location
+                <input
+                  name="location"
+                  defaultValue={current.location ?? ''}
+                  className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.3em] text-silver/60 md:col-span-2">
+                Image URLs (newline, comma or pipe separated)
+                <textarea
+                  name="images"
+                  defaultValue={current.images.join('\n')}
+                  rows={3}
+                  className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.3em] text-silver/60 md:col-span-2">
+                Audio URLs (newline, comma or pipe separated)
+                <textarea
+                  name="audio_urls"
+                  defaultValue={current.audio_urls.join('\n')}
+                  rows={3}
+                  className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                />
+              </label>
+              <label className="flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-silver/60">
+                <input type="checkbox" name="featured" defaultChecked={current.featured} />
+                Featured Vehicle
+              </label>
+              <div className="md:col-span-2 flex justify-end gap-4">
+                <GlowButton type="button" variant="secondary" onClick={closeModal}>
+                  Cancel
+                </GlowButton>
+                <GlowButton type="submit" disabled={isPending}>
+                  {isPending ? 'Saving…' : 'Save Vehicle'}
+                </GlowButton>
+              </div>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur">
           <div className="glass my-10 w-full max-w-3xl rounded-3xl border border-white/10 bg-black/60 shadow-glow">
@@ -342,8 +518,8 @@ export default function VehicleManager({ vehicles }: Props) {
               </form>
             </div>
           </div>
-        </div>
-      )}
+        </Dialog>
+      </Transition>
     </div>
   );
 }

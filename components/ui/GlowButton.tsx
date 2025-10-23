@@ -39,7 +39,7 @@ export default function GlowButton({
       type={type}
       disabled={disabled}
       className={clsx(
-        'relative inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm uppercase tracking-[0.35em] transition-all duration-500',
+        'relative inline-flex min-h-12 items-center justify-center gap-3 rounded-full px-6 py-3 text-sm uppercase tracking-[0.35em] transition-all duration-500 sm:px-8',
         variants[variant],
         disabled && 'pointer-events-none opacity-60',
         className

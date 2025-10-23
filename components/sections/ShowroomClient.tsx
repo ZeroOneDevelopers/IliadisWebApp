@@ -48,7 +48,7 @@ export default function ShowroomClient({ vehicles, brandOptions, fuelOptions, tr
         fuelOptions={fuelOptions}
         transmissionOptions={transmissionOptions}
       />
-      <motion.div layout className="relative z-0 grid gap-8 overflow-visible md:grid-cols-2">
+      <motion.div layout className="relative z-0 grid gap-6 overflow-visible sm:grid-cols-2 xl:grid-cols-3">
         {filteredVehicles.map((vehicle, index) => (
           <CarCard key={vehicle.id} vehicle={vehicle} index={index} />
         ))}

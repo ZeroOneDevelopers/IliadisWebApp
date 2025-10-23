@@ -78,7 +78,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="relative min-h-screen overflow-x-hidden bg-graphite text-silver">
         <div className="pointer-events-none fixed inset-0 -z-10 bg-hero-grid opacity-40" aria-hidden />
         <Navbar />
-        <main className="min-h-screen pt-24">{children}</main>
+        <main className="min-h-screen pt-28 sm:pt-32">{children}</main>
         <Footer />
         <Script id="schema-auto-dealer" type="application/ld+json">
           {JSON.stringify(schema)}

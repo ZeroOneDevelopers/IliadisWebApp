@@ -94,11 +94,11 @@ export default function DashboardOverview({ leads, stats }: Props) {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by client or vehicle"
-            className="w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-xs"
+            className="w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-xs min-h-12"
           />
           <GlowButton variant="secondary">Export Leads</GlowButton>
         </div>
-        <div className="mt-8 overflow-hidden rounded-3xl border border-white/10">
+        <div className="mt-8 overflow-x-auto rounded-3xl border border-white/10">
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
             <thead className="bg-white/5 uppercase tracking-[0.35em] text-silver/60">
               <tr>

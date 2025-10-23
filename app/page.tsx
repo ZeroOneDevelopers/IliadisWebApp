@@ -2,13 +2,47 @@ import Hero from '@/components/sections/Hero';
 import Highlights from '@/components/sections/Highlights';
 import CollectionTeaser from '@/components/sections/CollectionTeaser';
 import GlowButton from '@/components/ui/GlowButton';
+import CarCard from '@/components/sections/CarCard';
+import { prisma } from '@/lib/prisma';
+import { enrichVehicle } from '@/lib/vehicles';
 
-export default function HomePage() {
+export const revalidate = 0;
+
+export default async function HomePage() {
+  const featuredVehicles = await prisma.vehicle.findMany({
+    where: { featured: true },
+    orderBy: { createdAt: 'desc' },
+    take: 8
+  });
+  const showroomVehicles = featuredVehicles.map(enrichVehicle);
+
   return (
     <>
       <Hero />
       <Highlights />
-      <CollectionTeaser />
+      <section className="section-padding">
+        <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">
+          <div className="space-y-3 text-center">
+            <p className="text-xs uppercase tracking-[0.55em] text-silver/60">Featured Fleet</p>
+            <h2 className="font-heading text-4xl text-white md:text-5xl">Showroom Highlights</h2>
+            <p className="text-sm text-silver/70">
+              A curated glimpse of the executive vehicles currently in the spotlight. Discover the craftsmanship, provenance and
+              cinematic presentation awaiting inside the showroom.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {showroomVehicles.slice(0, 6).map((vehicle, index) => (
+              <CarCard key={vehicle.id} vehicle={vehicle} index={index} />
+            ))}
+            {showroomVehicles.length === 0 && (
+              <div className="sm:col-span-2 xl:col-span-3 rounded-3xl border border-white/10 bg-black/40 p-8 text-sm text-silver/70">
+                Feature vehicles from the dashboard to elevate this showcase on the homepage.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+      <CollectionTeaser vehicles={showroomVehicles} />
       <section className="section-padding">
         <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/5 to-transparent p-12 text-center shadow-innerGlow">
           <p className="text-xs uppercase tracking-[0.5em] text-silver/60">Private Lounge</p>
