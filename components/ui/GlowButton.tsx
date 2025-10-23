@@ -12,6 +12,7 @@ type GlowButtonProps = {
   variant?: 'primary' | 'secondary';
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 };
 
 const variants = {
@@ -27,7 +28,8 @@ export default function GlowButton({
   children,
   variant = 'primary',
   className,
-  type = 'button'
+  type = 'button',
+  disabled = false
 }: GlowButtonProps) {
   const content = (
     <motion.button
@@ -35,9 +37,11 @@ export default function GlowButton({
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       type={type}
+      disabled={disabled}
       className={clsx(
         'relative inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm uppercase tracking-[0.35em] transition-all duration-500',
         variants[variant],
+        disabled && 'pointer-events-none opacity-60',
         className
       )}
     >
