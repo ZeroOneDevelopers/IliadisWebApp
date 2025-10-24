@@ -3,7 +3,7 @@ import { Manrope, Poppins } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import Script from 'next/script';
 
 const heading = Manrope({
@@ -55,6 +55,30 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const backgroundImageOne = process.env.NEXT_PUBLIC_BG_IMAGE_1;
+  const backgroundImageTwo = process.env.NEXT_PUBLIC_BG_IMAGE_2;
+  const backgroundImageThree = process.env.NEXT_PUBLIC_BG_IMAGE_3;
+
+  const formatAsCssUrl = (value?: string) => {
+    if (!value) {
+      return undefined;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.startsWith('url(') ? trimmed : `url('${trimmed}')`;
+  };
+
+  const backgroundStyles: CSSProperties = {};
+  const assignBackground = (key: string, value?: string) => {
+    if (value) {
+      backgroundStyles[key] = value;
+    }
+  };
+
+  assignBackground('--iliadis-bg-1', formatAsCssUrl(backgroundImageOne));
+  assignBackground('--iliadis-bg-2', formatAsCssUrl(backgroundImageTwo));
+  assignBackground('--iliadis-bg-3', formatAsCssUrl(backgroundImageThree));
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
@@ -75,7 +99,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="en" className={`${heading.variable} ${body.variable}`}>
-      <body className="relative min-h-screen overflow-x-hidden bg-graphite text-silver">
+      <body className="relative min-h-screen overflow-x-hidden bg-graphite text-silver" style={backgroundStyles}>
         <div className="pointer-events-none fixed inset-0 -z-10 bg-hero-grid opacity-40" aria-hidden />
         <Navbar />
         <main className="min-h-screen pt-28 sm:pt-32">{children}</main>

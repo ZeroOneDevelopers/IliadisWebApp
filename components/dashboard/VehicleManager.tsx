@@ -6,6 +6,7 @@ import GlowButton from '@/components/ui/GlowButton';
 import { deleteVehicle, toggleVehicleFeatured, upsertVehicle } from '@/app/dashboard/actions';
 import ImportForm from '@/app/dashboard/(admin)/vehicles/ImportForm';
 import { Dialog, Transition } from '@headlessui/react';
+import { useRouter } from 'next/navigation';
 
 type Props = { vehicles: Vehicle[] };
 type FormState = Omit<Vehicle, 'createdAt' | 'updatedAt'>;
@@ -42,6 +43,7 @@ export default function VehicleManager({ vehicles }: Props) {
   const [isPending, startTransition] = useTransition();
   const [filterFeatured, setFilterFeatured] = useState<'ALL' | 'FEATURED'>('ALL');
   const [search, setSearch] = useState('');
+  const router = useRouter();
 
   // Lock body scroll όταν το modal είναι ανοιχτό
   useEffect(() => {
@@ -121,6 +123,7 @@ export default function VehicleManager({ vehicles }: Props) {
     startTransition(async () => {
       try {
         await upsertVehicle(payload);
+        router.refresh();
         closeModal();
       } catch (error) {
         console.error('Failed to save vehicle', error);
@@ -133,6 +136,7 @@ export default function VehicleManager({ vehicles }: Props) {
     startTransition(async () => {
       try {
         await deleteVehicle(id);
+        router.refresh();
       } catch (error) {
         console.error('Failed to delete vehicle', error);
       }
@@ -143,6 +147,7 @@ export default function VehicleManager({ vehicles }: Props) {
     startTransition(async () => {
       try {
         await toggleVehicleFeatured(vehicle.id, !vehicle.featured);
+        router.refresh();
       } catch (error) {
         console.error('Failed to toggle featured flag', error);
       }

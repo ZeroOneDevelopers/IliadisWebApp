@@ -93,35 +93,45 @@ export async function upsertVehicle(data: VehiclePayload) {
     await prisma.vehicle.create({ data: payload });
   }
 
-  revalidatePath('/showroom');
   revalidatePath('/');
-  revalidatePath('/dashboard/vehicles');
+  revalidatePath('/showroom');
+  revalidatePath('/showroom/[slug]');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/vehicles');
 }
 
 export async function deleteVehicle(id: string) {
   await requireAdmin();
 
+  const existing = await prisma.vehicle.findUnique({ where: { id } });
+
   await prisma.vehicle.delete({ where: { id } });
 
-  revalidatePath('/showroom');
   revalidatePath('/');
-  revalidatePath('/dashboard/vehicles');
+  revalidatePath('/showroom');
+  revalidatePath('/showroom/[slug]');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/vehicles');
+
+  if (existing) {
+    revalidatePath(`/showroom/${existing.slug}`);
+  }
 }
 
 export async function toggleVehicleFeatured(id: string, featured: boolean) {
   await requireAdmin();
 
-  await prisma.vehicle.update({
+  const vehicle = await prisma.vehicle.update({
     where: { id },
     data: { featured }
   });
 
-  revalidatePath('/showroom');
   revalidatePath('/');
-  revalidatePath('/dashboard/vehicles');
+  revalidatePath('/showroom');
+  revalidatePath('/showroom/[slug]');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/vehicles');
+  revalidatePath(`/showroom/${vehicle.slug}`);
 }
 
 type LeadPayload = {
@@ -147,8 +157,8 @@ export async function createLead(data: LeadPayload) {
     }
   });
 
-  revalidatePath('/dashboard/leads');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/leads');
 }
 
 type BookingPayload = {
@@ -183,8 +193,8 @@ export async function createBooking(data: BookingPayload) {
     }
   });
 
-  revalidatePath('/dashboard/bookings');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/bookings');
 }
 
 export async function updateBookingStatus(id: string, status: BookingStatus) {
@@ -195,6 +205,24 @@ export async function updateBookingStatus(id: string, status: BookingStatus) {
     data: { status }
   });
 
-  revalidatePath('/dashboard/bookings');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/bookings');
+}
+
+export async function deleteLead(id: string) {
+  await requireAdmin();
+
+  await prisma.lead.delete({ where: { id } });
+
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/leads');
+}
+
+export async function deleteBooking(id: string) {
+  await requireAdmin();
+
+  await prisma.booking.delete({ where: { id } });
+
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/bookings');
 }

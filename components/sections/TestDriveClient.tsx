@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useMemo, useState, useTransition } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import GlowButton from '@/components/ui/GlowButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ShowroomVehicle } from '@/lib/vehicles';
@@ -38,6 +38,7 @@ export default function TestDriveClient({ vehicles }: Props) {
   });
   const [submitted, setSubmitted] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const calendarLink = useMemo(() => {
     const base = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
@@ -80,6 +81,7 @@ export default function TestDriveClient({ vehicles }: Props) {
           endTime: DEFAULT_END,
           notes: currentVehicle ? `Requested vehicle: ${currentVehicle.title}` : null
         });
+        router.refresh();
         setSubmitted(true);
       } catch (error) {
         console.error('Failed to create booking', error);
