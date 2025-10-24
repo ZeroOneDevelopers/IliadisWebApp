@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import type { BookingStatus, LeadType } from '@prisma/client';
+import type { BookingStatus, LeadType, Vehicle } from '@prisma/client';
 
 function parseBoolean(value: unknown): boolean {
   if (typeof value === 'boolean') return value;
@@ -52,7 +52,7 @@ type VehiclePayload = {
   featured?: boolean | string;
 };
 
-export async function upsertVehicle(data: VehiclePayload) {
+export async function upsertVehicle(data: VehiclePayload): Promise<Vehicle> {
   await requireAdmin();
 
   const payload = {
@@ -84,23 +84,23 @@ export async function upsertVehicle(data: VehiclePayload) {
     throw new Error('Vehicle title is required');
   }
 
-  if (data.id) {
-    await prisma.vehicle.update({
-      where: { id: data.id },
-      data: payload
-    });
-  } else {
-    await prisma.vehicle.create({ data: payload });
-  }
+  const record = data.id
+    ? await prisma.vehicle.update({
+        where: { id: data.id },
+        data: payload
+      })
+    : await prisma.vehicle.create({ data: payload });
 
   revalidatePath('/');
   revalidatePath('/showroom');
   revalidatePath('/showroom/[slug]');
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/vehicles');
+
+  return record;
 }
 
-export async function deleteVehicle(id: string) {
+export async function deleteVehicle(id: string): Promise<Vehicle | null> {
   await requireAdmin();
 
   const existing = await prisma.vehicle.findUnique({ where: { id } });
@@ -116,9 +116,11 @@ export async function deleteVehicle(id: string) {
   if (existing) {
     revalidatePath(`/showroom/${existing.slug}`);
   }
+
+  return existing ?? null;
 }
 
-export async function toggleVehicleFeatured(id: string, featured: boolean) {
+export async function toggleVehicleFeatured(id: string, featured: boolean): Promise<Vehicle> {
   await requireAdmin();
 
   const vehicle = await prisma.vehicle.update({
@@ -132,6 +134,8 @@ export async function toggleVehicleFeatured(id: string, featured: boolean) {
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/vehicles');
   revalidatePath(`/showroom/${vehicle.slug}`);
+
+  return vehicle;
 }
 
 type LeadPayload = {

@@ -35,7 +35,7 @@ function useFloatingPanel(buttonRef: React.RefObject<HTMLElement>) {
   const updatePosition = useCallback(() => {
     if (typeof window === 'undefined' || !buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
-    setStyle({ top: rect.bottom + window.scrollY + 12, left: rect.left + window.scrollX, width: rect.width });
+    setStyle({ top: rect.bottom + window.scrollY + 6, left: rect.left + window.scrollX, width: rect.width });
   }, [buttonRef]);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ function FloatingPanel({
         <div
           id={panelId}
           style={style}
-          className="fixed z-[80] max-w-md rounded-3xl border border-white/10 bg-black/80 p-3 text-xs uppercase tracking-[0.35em] text-silver/80 shadow-2xl backdrop-blur-xl"
+          className="fixed z-[80] mt-2 max-w-md rounded-2xl border border-white/10 bg-black/70 p-3 text-xs uppercase tracking-[0.35em] text-silver/80 shadow-2xl backdrop-blur-xl"
         >
           {children}
         </div>
@@ -303,7 +303,7 @@ function RangeDropdown({
 export default function ShowroomFilters({ value, onChange, brandOptions, fuelOptions, transmissionOptions }: Props) {
   return (
     <div className="relative z-10 mb-6">
-      <div className="glass isolate grid gap-3 rounded-3xl border border-white/10 bg-black/30 p-6 shadow-innerGlow md:grid-cols-5">
+      <div className="glass isolate grid gap-3 rounded-3xl border border-white/10 bg-black/30 p-4 shadow-innerGlow md:grid-cols-4">
         <FilterListbox label="Brand" value={value.brand} options={[null, ...brandOptions]} onChange={(brand) => onChange({ ...value, brand })} />
         <FilterListbox label="Fuel" value={value.fuel} options={[null, ...fuelOptions]} onChange={(fuel) => onChange({ ...value, fuel })} />
         <FilterListbox

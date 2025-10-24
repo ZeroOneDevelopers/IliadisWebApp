@@ -1,6 +1,5 @@
 import Hero from '@/components/sections/Hero';
 import Highlights from '@/components/sections/Highlights';
-import CollectionTeaser from '@/components/sections/CollectionTeaser';
 import GlowButton from '@/components/ui/GlowButton';
 import CarCard from '@/components/sections/CarCard';
 import { prisma } from '@/lib/prisma';
@@ -42,7 +41,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <CollectionTeaser vehicles={showroomVehicles} />
       <section className="section-padding">
         <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/5 to-transparent p-12 text-center shadow-innerGlow">
           <p className="text-xs uppercase tracking-[0.5em] text-silver/60">Private Lounge</p>
@@ -52,8 +50,10 @@ export default async function HomePage() {
             tailor-made driving experience. Every enquiry is handled with absolute confidentiality.
           </p>
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <GlowButton href="/test-drive">Book Test Drive</GlowButton>
-            <GlowButton href="mailto:liaison@iliadis.gr" variant="secondary">
+            <GlowButton href="/test-drive" className="w-full sm:w-auto">
+              Book Test Drive
+            </GlowButton>
+            <GlowButton href="mailto:liaison@iliadis.gr" variant="secondary" className="w-full sm:w-auto">
               Email Our Curators
             </GlowButton>
           </div>

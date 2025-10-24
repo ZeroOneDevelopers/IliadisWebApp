@@ -29,8 +29,8 @@ export default function Hero() {
         loop
         playsInline
       />
-      <div className="video-overlay absolute inset-0" />
-      <motion.div style={{ y, opacity }} className="relative z-20 section-padding pb-32">
+      <div className="video-overlay absolute inset-0" aria-hidden />
+      <motion.div style={{ y, opacity }} className="relative z-30 section-padding pb-40 sm:pb-48">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,30 +62,25 @@ export default function Hero() {
           transition={{ delay: 0.5, duration: 0.9, ease: 'easeOut' }}
           className="mt-12 flex flex-col gap-4 sm:flex-row"
         >
-          <GlowButton href="/showroom">Explore Collection</GlowButton>
-          <GlowButton href="/test-drive" variant="secondary">
+          <GlowButton href="/showroom" className="w-full sm:w-auto">
+            Explore Collection
+          </GlowButton>
+          <GlowButton href="/test-drive" variant="secondary" className="w-full sm:w-auto">
             Book Test Drive
           </GlowButton>
         </motion.div>
       </motion.div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.55 }}
-        transition={{ delay: 0.7, duration: 1.5 }}
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.4),transparent_60%)]"
-      />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.4),transparent_60%)]/60" />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 1 }}
-        className="pointer-events-none absolute inset-x-0 bottom-10 z-10"
+        className="absolute inset-x-0 bottom-10 z-20 flex justify-center"
       >
-        <div className="flex justify-center">
-          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-silver/70">
-            <span className="h-px w-12 bg-white/40" />
-            Curated for Connoisseurs
-            <span className="h-px w-12 bg-white/40" />
-          </div>
+        <div className="pointer-events-none flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-silver/70">
+          <span className="h-px w-12 bg-white/40" />
+          Curated for Connoisseurs
+          <span className="h-px w-12 bg-white/40" />
         </div>
       </motion.div>
     </section>

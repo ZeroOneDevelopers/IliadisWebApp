@@ -64,7 +64,7 @@ export default function ShowroomClient({ vehicles, brandOptions, fuelOptions, tr
         fuelOptions={fuelOptions}
         transmissionOptions={transmissionOptions}
       />
-      <motion.div layout className="relative z-0 grid gap-6 overflow-visible sm:grid-cols-2 xl:grid-cols-3">
+      <motion.div layout className="relative z-0 grid auto-rows-fr gap-6 overflow-visible sm:grid-cols-2 xl:grid-cols-3">
         {filteredVehicles.map((vehicle, index) => (
           <CarCard key={vehicle.id} vehicle={vehicle} index={index} />
         ))}
@@ -73,7 +73,7 @@ export default function ShowroomClient({ vehicles, brandOptions, fuelOptions, tr
         <div className="rounded-3xl border border-white/10 bg-black/40 p-12 text-center text-sm text-silver/60">
           No vehicles found for this combination. Our concierge can source it privately.
           <div className="mt-6 flex justify-center">
-            <GlowButton href="mailto:liaison@iliadis.gr" variant="secondary">
+            <GlowButton href="mailto:liaison@iliadis.gr" variant="secondary" className="w-full max-w-xs sm:w-auto">
               Contact Concierge
             </GlowButton>
           </div>

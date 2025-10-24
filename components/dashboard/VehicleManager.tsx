@@ -44,6 +44,7 @@ export default function VehicleManager({ vehicles }: Props) {
   const [filterFeatured, setFilterFeatured] = useState<'ALL' | 'FEATURED'>('ALL');
   const [search, setSearch] = useState('');
   const router = useRouter();
+  const [inventory, setInventory] = useState<Vehicle[]>(vehicles);
 
   // Lock body scroll όταν το modal είναι ανοιχτό
   useEffect(() => {
@@ -55,8 +56,12 @@ export default function VehicleManager({ vehicles }: Props) {
     };
   }, [isModalOpen]);
 
+  useEffect(() => {
+    setInventory(vehicles);
+  }, [vehicles]);
+
   const filteredVehicles = useMemo(() => {
-    return vehicles.filter((vehicle) => {
+    return inventory.filter((vehicle) => {
       const matchesFeatured = filterFeatured === 'ALL' ? true : vehicle.featured;
       const matchesSearch = search
         ? vehicle.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -64,7 +69,7 @@ export default function VehicleManager({ vehicles }: Props) {
         : true;
       return matchesFeatured && matchesSearch;
     });
-  }, [filterFeatured, search, vehicles]);
+  }, [filterFeatured, search, inventory]);
 
   function openCreateModal() {
     setCurrent({ ...emptyVehicle });
@@ -122,7 +127,14 @@ export default function VehicleManager({ vehicles }: Props) {
 
     startTransition(async () => {
       try {
-        await upsertVehicle(payload);
+        const record = await upsertVehicle(payload);
+        setInventory((prev) => {
+          const exists = prev.some((item) => item.id === record.id);
+          if (exists) {
+            return prev.map((item) => (item.id === record.id ? record : item));
+          }
+          return [record, ...prev];
+        });
         router.refresh();
         closeModal();
       } catch (error) {
@@ -136,6 +148,7 @@ export default function VehicleManager({ vehicles }: Props) {
     startTransition(async () => {
       try {
         await deleteVehicle(id);
+        setInventory((prev) => prev.filter((vehicle) => vehicle.id !== id));
         router.refresh();
       } catch (error) {
         console.error('Failed to delete vehicle', error);
@@ -146,7 +159,8 @@ export default function VehicleManager({ vehicles }: Props) {
   function handleToggleFeatured(vehicle: Vehicle) {
     startTransition(async () => {
       try {
-        await toggleVehicleFeatured(vehicle.id, !vehicle.featured);
+        const record = await toggleVehicleFeatured(vehicle.id, !vehicle.featured);
+        setInventory((prev) => prev.map((item) => (item.id === record.id ? record : item)));
         router.refresh();
       } catch (error) {
         console.error('Failed to toggle featured flag', error);
@@ -178,7 +192,13 @@ export default function VehicleManager({ vehicles }: Props) {
             placeholder="Search inventory"
             className="min-h-12 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-sm"
           />
-          <ImportForm />
+          <ImportForm
+            onImported={(nextVehicles) => {
+              if (Array.isArray(nextVehicles)) {
+                setInventory(nextVehicles);
+              }
+            }}
+          />
         </div>
 
         {/* Desktop table */}
