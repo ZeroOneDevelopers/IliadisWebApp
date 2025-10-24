@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useTransition } from 'react';
-import Papa from 'papaparse';
+import * as Papa from 'papaparse';
 import GlowButton from '@/components/ui/GlowButton';
 import { useRouter } from 'next/navigation';
 import type { Vehicle } from '@prisma/client';
