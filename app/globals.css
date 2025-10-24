@@ -66,13 +66,13 @@ a:hover {
 }
 
 .glass {
-  @apply border border-white/12 bg-black/60 backdrop-blur-2xl shadow-innerGlow;
+  @apply border border-white/10 bg-black/60 backdrop-blur-2xl shadow-innerGlow;
 }
 
 @layer components {
   /* Shared panel surfaces so overlays stay consistent across sections */
   .surface-panel {
-    @apply border border-white/12 bg-black/60 backdrop-blur-2xl shadow-innerGlow;
+    @apply border border-white12 bg-black/60 backdrop-blur-2xl shadow-innerGlow;
   }
 
   .surface-panel-strong {
