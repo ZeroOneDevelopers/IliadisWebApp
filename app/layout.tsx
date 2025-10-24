@@ -74,11 +74,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const backgroundStyles: React.CSSProperties & Record<`--${string}`, string> = {};
 
   const fallbackBackgrounds = {
-    home: "url('/images/backgrounds/home.jpg')",
-    showroom: "url('/images/backgrounds/showroom.jpg')",
-    details: "url('/images/backgrounds/details.jpg')",
-    dashboard: "url('/images/backgrounds/dashboard.jpg')",
-    testDrive: "url('/images/backgrounds/test-drive.jpg')"
+    home: "url('https://lh3.googleusercontent.com/p/AF1QipPvXVjzR_SPrUBMFjwetMwj4N4gqGD1crmJR2WC=s1360-w1360-h1020-rw')",
+    showroom: "url('https://lh3.googleusercontent.com/gps-cs-s/AC9h4npSYfBmHmKBb6tcY4QOfTO0PrMD89Rv6CnQk664BBOLT2igSeCoSR_5JyX7E01VyQhhD04AYDT4aq3_azNmR6nOScku2NrNHc_WAbKC2UkXCoi4kxUOSuk9qXBAAicoqTRRPpX26w=s1360-w1360-h1020-rw')",
+    details: "url('https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8')",
+    dashboard: "url('https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8')",
+    testDrive: "url('https://www.iliadisrentals.com/rsq8/0-02-05-f5d0bf07c07e55c2842b58eb25e87efed29c052e7921d7f127da0fd4459bf77f_5c9e0d0335f46abf.webp')"
   } as const;
 
   backgroundStyles['--page-bg-home'] =

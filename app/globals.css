@@ -38,18 +38,17 @@ body::before {
   background-position: center top;
   background-repeat: no-repeat;
   background-size: cover;
+  opacity: var(--page-overlay-strength, 0.4);
   filter: saturate(0.95) brightness(0.9);
 }
 
 body::after {
   z-index: -30;
   background-attachment: fixed, fixed;
-  background-image:
-    radial-gradient(1200px 600px at 12% -10%, rgba(255, 255, 255, 0.08), transparent 65%),
-    var(--bg-noise);
   background-repeat: no-repeat, repeat;
   background-size: cover, 320px 320px;
-  opacity: var(--page-overlay-strength, 0.6);
+  background-color: #0b0c10;
+  opacity: var(--page-overlay-strength, 0.2);
   mix-blend-mode: normal;
 }
 

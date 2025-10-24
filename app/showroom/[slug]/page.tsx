@@ -91,8 +91,8 @@ export default async function CarDetailsPage({ params }: Props) {
           <div className="surface-panel-strong space-y-6 rounded-3xl p-8 sm:p-10">
             <div className="flex items-center gap-3 text-xs uppercase tracking-[0.55em] text-silver/60">
               {makeLogo ? (
-                <span className="relative inline-flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-black/40">
-                  <Image src={makeLogo} alt="" fill sizes="24px" className="object-contain" />
+                <span className="relative inline-flex h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-md border border-black/10 bg-white/20">
+                  <Image src={makeLogo} alt={`${showroomVehicle.make} logo`} fill sizes="36px" className="object-cover" />
                 </span>
               ) : null}
               <span>{showroomVehicle.make}</span>

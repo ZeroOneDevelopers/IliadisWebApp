@@ -26,7 +26,7 @@ export default function CarCard({ vehicle, index }: { vehicle: ShowroomVehicle; 
           fill
           quality={90}
           sizes="(max-width:640px) 92vw, (max-width:1024px) 44vw, 30vw"
-          className="object-contain object-center"
+          className="object-center"
           placeholder="blur"
           blurDataURL={SHIMMER_DATA_URL}
           priority={vehicle.featured && index === 0}
@@ -74,9 +74,9 @@ export default function CarCard({ vehicle, index }: { vehicle: ShowroomVehicle; 
               {logo ? (
                 <span
                   aria-hidden="true"
-                  className="relative inline-flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-black/40"
+                  className="relative inline-flex h-6 w-6 overflow-hidden rounded-md border border-black/10 bg-white/20"
                 >
-                  <Image src={logo} alt="" fill sizes="20px" className="object-contain" />
+                  <Image src={logo} alt={`${vehicle.make} logo`} fill sizes="28px" className="object-cover" />
                 </span>
               ) : null}
               <span className="line-clamp-1">{vehicle.make}</span>
