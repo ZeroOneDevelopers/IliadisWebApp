@@ -61,7 +61,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.9, ease: 'easeOut' }}
-            className="mt-12 flex flex-col gap-4 sm:flex-row"
+            className="mt-12 flex flex-col gap-4 sm:flex-row sm:flex-wrap"
           >
             <GlowButton href="/showroom" className="w-full sm:w-auto">
               Explore Collection
@@ -88,3 +88,6 @@ export default function Hero() {
     </section>
   );
 }
+
+// REQUIRED ASSETS (not included):
+// none

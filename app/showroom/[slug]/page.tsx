@@ -7,6 +7,9 @@ import VehicleGallery from '@/components/sections/VehicleGallery';
 import LuxAudioPlayer from '@/components/ui/LuxAudioPlayer';
 import VehicleEnquiryForm from '@/components/sections/VehicleEnquiryForm';
 import PageBackground from '@/components/layout/PageBackground';
+import CarCard from '@/components/sections/CarCard';
+import { getBrandLogo } from '@/lib/brands';
+import Image from 'next/image';
 
 type Props = {
   params: { slug: string };
@@ -41,6 +44,16 @@ export default async function CarDetailsPage({ params }: Props) {
   }
 
   const showroomVehicle = enrichVehicle(vehicle);
+  const relatedVehiclesRaw = await prisma.vehicle.findMany({
+    where: {
+      id: { not: showroomVehicle.id },
+      OR: [{ make: showroomVehicle.make }, { body: showroomVehicle.body }]
+    },
+    orderBy: [{ featured: 'desc' }, { createdAt: 'desc' }],
+    take: 6
+  });
+  const relatedVehicles = relatedVehiclesRaw.map(enrichVehicle);
+  const makeLogo = getBrandLogo(showroomVehicle.make);
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Vehicle',
@@ -63,8 +76,6 @@ export default async function CarDetailsPage({ params }: Props) {
     }
   } as const;
 
-  const galleryImages = [showroomVehicle.primaryImage, ...showroomVehicle.secondaryImages];
-
   return (
     <section className="section-padding">
       <PageBackground page="details" />
@@ -75,9 +86,17 @@ export default async function CarDetailsPage({ params }: Props) {
             title={showroomVehicle.title}
             priority
             variant="hero"
+            enableLightbox
           />
           <div className="surface-panel-strong space-y-6 rounded-3xl p-8 sm:p-10">
-            <p className="text-xs uppercase tracking-[0.55em] text-silver/60">{showroomVehicle.make}</p>
+            <div className="flex items-center gap-3 text-xs uppercase tracking-[0.55em] text-silver/60">
+              {makeLogo ? (
+                <span className="relative inline-flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-black/40">
+                  <Image src={makeLogo} alt="" fill sizes="24px" className="object-contain" />
+                </span>
+              ) : null}
+              <span>{showroomVehicle.make}</span>
+            </div>
             <h1 className="font-heading text-4xl text-white md:text-5xl">{showroomVehicle.title}</h1>
             <div className="grid grid-cols-2 gap-4 text-xs uppercase tracking-[0.3em] text-silver/60">
               <div>
@@ -109,7 +128,7 @@ export default async function CarDetailsPage({ params }: Props) {
             <p className="text-xs uppercase tracking-[0.3em] text-silver/50">
               Engine audio placeholder — replace with bespoke rev sample from dashboard upload.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
               <GlowButton href={`/test-drive?vehicle=${encodeURIComponent(showroomVehicle.title)}`} className="w-full sm:w-auto">
                 Book Test Drive
               </GlowButton>
@@ -123,15 +142,29 @@ export default async function CarDetailsPage({ params }: Props) {
           </div>
         </div>
         {showroomVehicle.description && (
-          <div className="mx-auto max-w-4xl space-y-4 rounded-3xl border border-white/10 bg-black/35 p-8 text-silver/70 shadow-innerGlow">
+          <div className="mx-auto max-w-4xl space-y-4 rounded-3xl surface-panel p-8 text-silver/70">
             <h2 className="font-heading text-2xl text-white">Vehicle Narrative</h2>
             <p className="whitespace-pre-line text-sm leading-relaxed">{showroomVehicle.description}</p>
           </div>
         )}
-        <div className="space-y-4" id="gallery">
-          <h2 className="font-heading text-2xl text-white">Gallery</h2>
-          <VehicleGallery images={galleryImages} title={showroomVehicle.title} variant="detail" enableLightbox />
-        </div>
+        {relatedVehicles.length > 0 && (
+          <div className="space-y-6">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Curated Suggestions</p>
+                <h2 className="mt-2 font-heading text-2xl text-white">Related Vehicles</h2>
+              </div>
+              <GlowButton href="/showroom" variant="secondary" className="whitespace-nowrap">
+                View Full Showroom
+              </GlowButton>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {relatedVehicles.map((item, relatedIndex) => (
+                <CarCard key={item.id} vehicle={item} index={relatedIndex} />
+              ))}
+            </div>
+          </div>
+        )}
         <div id="enquiry">
           <VehicleEnquiryForm vehicleId={showroomVehicle.id} vehicleTitle={showroomVehicle.title} />
         </div>
@@ -148,3 +181,15 @@ export default async function CarDetailsPage({ params }: Props) {
     </section>
   );
 }
+
+// REQUIRED ASSETS (not included):
+// public/brands/porsche.svg
+// public/brands/ferrari.svg
+// public/brands/lamborghini.svg
+// public/brands/mercedes.svg
+// public/brands/audi.svg
+// public/brands/bmw.svg
+// public/brands/bentley.svg
+// public/brands/rolls-royce.svg
+// public/brands/maserati.svg
+// public/brands/aston-martin.svg

@@ -9,7 +9,7 @@ const IMAGE_VARIABLES: Record<PageKey, string> = {
   showroom: 'var(--page-bg-showroom)',
   details: 'var(--page-bg-details)',
   dashboard: 'var(--page-bg-dashboard)',
-  'test-drive': 'var(--page-bg-showroom)'
+  'test-drive': 'var(--page-bg-test-drive)'
 };
 
 const OVERLAY_VARIABLES: Record<PageKey, string> = {
@@ -17,7 +17,7 @@ const OVERLAY_VARIABLES: Record<PageKey, string> = {
   showroom: 'var(--page-overlay-showroom)',
   details: 'var(--page-overlay-details)',
   dashboard: 'var(--page-overlay-dashboard)',
-  'test-drive': 'var(--page-overlay-showroom)'
+  'test-drive': 'var(--page-overlay-test-drive)'
 };
 
 export default function PageBackground({ page }: { page: PageKey }) {
@@ -57,3 +57,10 @@ export default function PageBackground({ page }: { page: PageKey }) {
 
   return null;
 }
+
+// REQUIRED ASSETS (not included):
+// public/images/backgrounds/home.jpg
+// public/images/backgrounds/showroom.jpg
+// public/images/backgrounds/details.jpg
+// public/images/backgrounds/test-drive.jpg
+// public/images/backgrounds/dashboard.jpg

@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useId, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -17,6 +17,7 @@ export default function Lightbox({ images, initial = 0, onClose }: LightboxProps
   const [open, setOpen] = useState(true);
   const [index, setIndex] = useState(initial);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const instructionsId = useId();
 
   useEffect(() => {
     setIndex(initial);
@@ -101,7 +102,11 @@ export default function Lightbox({ images, initial = 0, onClose }: LightboxProps
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-2"
           >
-            <Dialog.Panel className="relative w-full max-w-5xl">
+            <Dialog.Panel className="relative w-full max-w-5xl" aria-describedby={instructionsId}>
+              <Dialog.Title className="sr-only">{`Viewing ${images.length} images`}</Dialog.Title>
+              <p id={instructionsId} className="sr-only">
+                Use left and right arrow keys or swipe to navigate vehicle images. Press Escape to close.
+              </p>
               <button
                 type="button"
                 onClick={close}
@@ -120,7 +125,7 @@ export default function Lightbox({ images, initial = 0, onClose }: LightboxProps
                   src={images[index]}
                   alt="Vehicle gallery image"
                   fill
-                  sizes="100vw"
+                  sizes="(max-width: 768px) 100vw, 80vw"
                   quality={95}
                   className="object-contain"
                   priority
@@ -158,3 +163,6 @@ export default function Lightbox({ images, initial = 0, onClose }: LightboxProps
     </Transition>
   );
 }
+
+// REQUIRED ASSETS (not included):
+// none
