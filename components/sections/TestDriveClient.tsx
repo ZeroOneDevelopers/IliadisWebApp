@@ -196,8 +196,8 @@ export default function TestDriveClient({ vehicles }: Props) {
         <div className="glass rounded-3xl border border-white/10 bg-black/40 p-10 shadow-innerGlow">
           <h2 className="font-heading text-2xl text-white">Need Immediate Assistance?</h2>
           <p className="mt-3 text-sm text-silver/70">
-            Call our executive line at <a href="tel:+302101234567" className="text-white">+30 210 123 4567</a> or visit the showroom at
-            Leof. Kifisias 54, Athens.
+            Call our executive line at <a href="tel:+306946061486" className="text-white">+30 694 606 1486</a> or visit the showroom at
+            Varis Koropiou Ave 2, Voula 166 73.
           </p>
         </div>
       </div>

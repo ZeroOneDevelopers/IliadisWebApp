@@ -65,12 +65,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       'Premium showroom in Athens specialising in Ferrari, Lamborghini, Rolls-Royce and executive vehicles.',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Leof. Kifisias 54',
-      addressLocality: 'Athens',
+      streetAddress: 'Varis Koropiou Ave 2',
+      addressLocality: 'Voula 166 73',
       addressCountry: 'GR'
     },
     openingHours: 'Mo-Fr 10:00-19:00',
-    telephone: '+30 210 123 4567'
+    telephone: '+30 694 606 1486'
   } as const;
 
   return (

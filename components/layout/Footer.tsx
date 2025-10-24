@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-12">
         <div className="space-y-3 text-sm text-silver/70">
           <p className="uppercase tracking-[0.35em] text-silver">Iliadis Executive Cars</p>
-          <p>Leof. Kifisias 54, Athens | +30 210 123 4567</p>
+          <p>Varis Koropiou Ave 2, Voula 166 73 | +30 694 606 1486</p>
           <p>© {new Date().getFullYear()} Iliadis Executive Cars. Crafted for connoisseurs.</p>
         </div>
         <div className="flex flex-col items-start gap-4 text-sm uppercase tracking-[0.35em] md:flex-row md:items-center">
