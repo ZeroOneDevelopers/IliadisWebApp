@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
@@ -53,9 +53,16 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
     setActiveIndex(0);
   }, [images.join('|')]);
 
-  function scrollTo(index: number) {
-    setActiveIndex(Math.max(0, Math.min(images.length - 1, index)));
-  }
+  const scrollTo = useCallback(
+    (index: number) => {
+      setActiveIndex((current) => {
+        const next = Math.max(0, Math.min(images.length - 1, index));
+        if (current === next) return current;
+        return next;
+      });
+    },
+    [images.length]
+  );
 
   const handleSelect = (index: number) => {
     if (!enableLightbox) return;
@@ -63,17 +70,27 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
   };
 
   const aspectClass = variant === 'hero' ? 'aspect-[16/9]' : 'aspect-[4/3] md:aspect-[16/9]';
+  const sizes = useMemo(
+    () =>
+      variant === 'hero'
+        ? '(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 60vw'
+        : '(max-width: 768px) 100vw, (max-width: 1280px) 60vw, 40vw',
+    [variant]
+  );
+  const isAtStart = activeIndex === 0;
+  const isAtEnd = activeIndex === images.length - 1;
 
   return (
     <div
       className={clsx(
-        'relative overflow-hidden rounded-3xl',
-        variant === 'hero' ? 'border border-white/10 shadow-innerGlow' : 'border border-white/10'
+        'relative overflow-hidden rounded-3xl border border-white/12 bg-black',
+        variant === 'hero' ? 'shadow-innerGlow' : ''
       )}
     >
       <div
         ref={containerRef}
-        className={clsx('flex snap-x snap-mandatory overflow-x-auto scroll-smooth bg-black/40 no-scrollbar')}
+        className={clsx('flex snap-x snap-mandatory overflow-x-auto scroll-smooth bg-black no-scrollbar')}
+        aria-live="polite"
       >
         {images.map((src, index) =>
           enableLightbox ? (
@@ -82,7 +99,7 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
               type="button"
               onClick={() => handleSelect(index)}
               className={clsx(
-                'relative w-full flex-shrink-0 snap-start',
+                'relative w-full flex-shrink-0 snap-start touch-manipulation',
                 aspectClass,
                 'cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40'
               )}
@@ -91,27 +108,34 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
                 src={src}
                 alt={`${title} image ${index + 1}`}
                 fill
-                className="object-cover transition-transform duration-500 hover:scale-[1.01]"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
+                className="object-contain transition-transform duration-500 hover:scale-[1.01]"
+                sizes={sizes}
                 quality={variant === 'hero' ? 95 : 90}
                 priority={priority && index === 0}
                 placeholder="blur"
                 blurDataURL={SHIMMER_DATA_URL}
+                loading={priority && index === 0 ? 'eager' : 'lazy'}
+                draggable={false}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
             </button>
           ) : (
-            <div key={`${src}-${index}`} className={clsx('relative w-full flex-shrink-0 snap-start', aspectClass)}>
+            <div
+              key={`${src}-${index}`}
+              className={clsx('relative w-full flex-shrink-0 snap-start touch-manipulation', aspectClass)}
+            >
               <Image
                 src={src}
                 alt={`${title} image ${index + 1}`}
                 fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
+                className="object-contain"
+                sizes={sizes}
                 quality={variant === 'hero' ? 95 : 90}
                 priority={priority && index === 0}
                 placeholder="blur"
                 blurDataURL={SHIMMER_DATA_URL}
+                loading={priority && index === 0 ? 'eager' : 'lazy'}
+                draggable={false}
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
             </div>
@@ -139,16 +163,26 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
           <button
             type="button"
             onClick={() => scrollTo(activeIndex - 1)}
-            className="absolute left-4 top-1/2 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-3 text-white backdrop-blur-xl transition hover:border-white/40 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:flex"
+            className={clsx(
+              'absolute left-4 top-1/2 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/70 p-3 text-white backdrop-blur-xl transition hover:border-white/40 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:flex',
+              isAtStart && 'pointer-events-none opacity-40'
+            )}
             aria-label="Previous image"
+            aria-disabled={isAtStart}
+            disabled={isAtStart}
           >
             <ChevronLeftIcon className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={() => scrollTo(activeIndex + 1)}
-            className="absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/60 p-3 text-white backdrop-blur-xl transition hover:border-white/40 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:flex"
+            className={clsx(
+              'absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/70 p-3 text-white backdrop-blur-xl transition hover:border-white/40 hover:text-white/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:flex',
+              isAtEnd && 'pointer-events-none opacity-40'
+            )}
             aria-label="Next image"
+            aria-disabled={isAtEnd}
+            disabled={isAtEnd}
           >
             <ChevronRightIcon className="h-5 w-5" />
           </button>

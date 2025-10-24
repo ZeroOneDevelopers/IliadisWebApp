@@ -4,6 +4,7 @@ import GlowButton from '@/components/ui/GlowButton';
 import CarCard from '@/components/sections/CarCard';
 import { prisma } from '@/lib/prisma';
 import { enrichVehicle } from '@/lib/vehicles';
+import PageBackground from '@/components/layout/PageBackground';
 
 export const revalidate = 0;
 
@@ -17,6 +18,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <PageBackground page="home" />
       <Hero />
       <Highlights />
       <section className="section-padding">
@@ -34,7 +36,7 @@ export default async function HomePage() {
               <CarCard key={vehicle.id} vehicle={vehicle} index={index} />
             ))}
             {showroomVehicles.length === 0 && (
-              <div className="sm:col-span-2 xl:col-span-3 rounded-3xl border border-white/10 bg-black/40 p-8 text-sm text-silver/70">
+              <div className="sm:col-span-2 xl:col-span-3 surface-panel rounded-3xl p-8 text-sm text-silver/70">
                 Feature vehicles from the dashboard to elevate this showcase on the homepage.
               </div>
             )}

@@ -98,7 +98,7 @@ export default function LuxAudioPlayer({ src }: Props) {
   }
 
   return (
-    <div className="group flex items-center gap-5 rounded-3xl border border-white/10 bg-black/40 p-4 shadow-innerGlow transition duration-300 hover:border-white/30 hover:shadow-glow">
+    <div className="group flex items-center gap-5 surface-panel rounded-3xl p-4 transition duration-300 hover:border-white/30 hover:shadow-glow">
       <button
         type="button"
         onClick={togglePlayback}

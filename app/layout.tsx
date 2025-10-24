@@ -3,7 +3,7 @@ import { Manrope, Poppins } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Script from 'next/script';
 
 const heading = Manrope({
@@ -54,15 +54,52 @@ export const metadata: Metadata = {
   }
 };
 
-const bg = (env?: string, fallback?: string) =>
-  env?.trim() ? (env.startsWith('url(') ? env : `url('${env}')`) : fallback ? `url('${fallback}')` : undefined;
+const asBackgroundValue = (value?: string) => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  // Accept raw CSS gradients/urls while still allowing plain asset paths.
+  return /^(url\(|linear-gradient|radial-gradient)/.test(trimmed) ? trimmed : `url('${trimmed}')`;
+};
+
+const bg = (...values: (string | undefined)[]) => {
+  for (const candidate of values) {
+    const parsed = asBackgroundValue(candidate);
+    if (parsed) return parsed;
+  }
+  return undefined;
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const backgroundStyles: React.CSSProperties & Record<`--${string}`, string> = {};
 
-  backgroundStyles['--iliadis-bg-1'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_1, '/images/bg/iliadis-bg-1.jpg')!;
-  backgroundStyles['--iliadis-bg-2'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_2, '/images/bg/iliadis-bg-2.jpg')!;
-  backgroundStyles['--iliadis-bg-3'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_3, '/images/bg/iliadis-bg-3.jpg')!;
+  const fallbackBackgrounds = {
+    home: "linear-gradient(140deg, rgba(11,12,16,0.95) 0%, rgba(33,36,45,0.8) 45%, rgba(11,12,16,0.92) 100%)",
+    showroom: "linear-gradient(135deg, rgba(11,12,16,0.94) 10%, rgba(24,27,35,0.88) 55%, rgba(11,12,16,0.94) 95%)",
+    details: "linear-gradient(130deg, rgba(8,9,13,0.94) 5%, rgba(17,19,26,0.9) 60%, rgba(8,9,13,0.94) 100%)",
+    dashboard: "linear-gradient(145deg, rgba(9,10,14,0.95) 0%, rgba(28,31,40,0.88) 55%, rgba(9,10,14,0.95) 100%)"
+  } as const;
+
+  backgroundStyles['--page-bg-home'] =
+    bg(process.env.NEXT_PUBLIC_BG_HOME, process.env.NEXT_PUBLIC_BG_IMAGE_1, fallbackBackgrounds.home) ?? fallbackBackgrounds.home;
+  backgroundStyles['--page-bg-showroom'] =
+    bg(
+      process.env.NEXT_PUBLIC_BG_SHOWROOM,
+      process.env.NEXT_PUBLIC_BG_IMAGE_2,
+      process.env.NEXT_PUBLIC_BG_IMAGE_1,
+      fallbackBackgrounds.showroom
+    ) ?? fallbackBackgrounds.showroom;
+  backgroundStyles['--page-bg-details'] =
+    bg(process.env.NEXT_PUBLIC_BG_DETAILS, process.env.NEXT_PUBLIC_BG_IMAGE_3, fallbackBackgrounds.details) ??
+    fallbackBackgrounds.details;
+  backgroundStyles['--page-bg-dashboard'] =
+    bg(process.env.NEXT_PUBLIC_BG_DASHBOARD, process.env.NEXT_PUBLIC_BG_IMAGE_2, fallbackBackgrounds.dashboard) ??
+    fallbackBackgrounds.dashboard;
+
+  backgroundStyles['--page-overlay-home'] = '0.58';
+  backgroundStyles['--page-overlay-showroom'] = '0.6';
+  backgroundStyles['--page-overlay-details'] = '0.68';
+  backgroundStyles['--page-overlay-dashboard'] = '0.7';
 
   const schema = {
     '@context': 'https://schema.org',
@@ -85,7 +122,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${heading.variable} ${body.variable}`}>
       <body className="relative min-h-screen overflow-x-hidden bg-graphite text-silver" style={backgroundStyles}>
-        <div className="pointer-events-none fixed inset-0 -z-10 bg-hero-grid opacity-40" aria-hidden />
+        <div className="pointer-events-none fixed inset-0 -z-10 bg-hero-grid opacity-20" aria-hidden />
         <Navbar />
         <main className="min-h-screen pt-28 sm:pt-32">{children}</main>
         <Footer />

@@ -21,15 +21,16 @@ export default function CollectionTeaser({ vehicles }: Props) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ delay: 0.2, duration: 0.8, ease: 'easeOut' }}
-            className="glass card-hover grid items-center gap-8 overflow-hidden rounded-3xl border border-white/5 bg-black/40 shadow-innerGlow md:grid-cols-2"
+            className="card-hover surface-panel grid items-center gap-8 overflow-hidden rounded-3xl md:grid-cols-2"
           >
-            <div className={`relative aspect-[4/3] w-full overflow-hidden md:h-full md:aspect-auto ${index % 2 === 1 ? 'md:order-last' : ''}`}>
+            <div className={`relative aspect-[4/3] w-full overflow-hidden bg-black md:h-full md:aspect-auto ${index % 2 === 1 ? 'md:order-last' : ''}`}>
               <Image
                 src={vehicle.primaryImage}
                 alt={vehicle.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
-                className="object-cover"
+                className="object-contain"
+                draggable={false}
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-black/60 via-black/10 to-transparent" />
             </div>
@@ -46,7 +47,7 @@ export default function CollectionTeaser({ vehicles }: Props) {
           </motion.article>
         ))}
         {spotlight.length === 0 && (
-          <div className="rounded-3xl border border-white/10 bg-black/40 p-10 text-center text-sm text-silver/70">
+          <div className="surface-panel rounded-3xl p-10 text-center text-sm text-silver/70">
             No featured vehicles available yet. Add them from the dashboard to populate this spotlight.
           </div>
         )}

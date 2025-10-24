@@ -31,44 +31,46 @@ export default function Hero() {
       />
       <div className="video-overlay absolute inset-0" aria-hidden />
       <motion.div style={{ y, opacity }} className="relative z-30 section-padding pb-40 sm:pb-48">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="mb-6 text-sm uppercase tracking-[0.6em] text-silver/80"
-        >
-          Redefining Luxury
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.9, ease: 'easeOut' }}
-          className="max-w-3xl font-heading text-5xl text-white md:text-6xl lg:text-7xl"
-        >
-          A cinematic journey through the world&apos;s most prestigious executive vehicles.
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.9, ease: 'easeOut' }}
-          className="mt-8 max-w-2xl text-lg text-silver/80"
-        >
-          Iliadis Executive Cars orchestrates bespoke driving experiences with Ferrari, Lamborghini, Rolls-Royce, Bentley and
-          more. Step into a digital atelier where each vehicle is presented with cinematic reverence.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.9, ease: 'easeOut' }}
-          className="mt-12 flex flex-col gap-4 sm:flex-row"
-        >
-          <GlowButton href="/showroom" className="w-full sm:w-auto">
-            Explore Collection
-          </GlowButton>
-          <GlowButton href="/test-drive" variant="secondary" className="w-full sm:w-auto">
-            Book Test Drive
-          </GlowButton>
-        </motion.div>
+        <div className="surface-panel-strong max-w-3xl rounded-3xl border-white/15 p-8 sm:p-10">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="text-sm uppercase tracking-[0.6em] text-silver/80"
+          >
+            Redefining Luxury
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.9, ease: 'easeOut' }}
+            className="mt-6 font-heading text-5xl text-white md:text-6xl lg:text-7xl"
+          >
+            A cinematic journey through the world&apos;s most prestigious executive vehicles.
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.9, ease: 'easeOut' }}
+            className="mt-8 text-lg text-silver/80"
+          >
+            Iliadis Executive Cars orchestrates bespoke driving experiences with Ferrari, Lamborghini, Rolls-Royce, Bentley and
+            more. Step into a digital atelier where each vehicle is presented with cinematic reverence.
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.9, ease: 'easeOut' }}
+            className="mt-12 flex flex-col gap-4 sm:flex-row"
+          >
+            <GlowButton href="/showroom" className="w-full sm:w-auto">
+              Explore Collection
+            </GlowButton>
+            <GlowButton href="/test-drive" variant="secondary" className="w-full sm:w-auto">
+              Book Test Drive
+            </GlowButton>
+          </motion.div>
+        </div>
       </motion.div>
       <div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.4),transparent_60%)]/60" />
       <motion.div

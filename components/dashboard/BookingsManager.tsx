@@ -48,7 +48,7 @@ export default function BookingsManager({ bookings }: Props) {
         <h1 className="font-heading text-3xl text-white">Test Drive Bookings</h1>
         <p className="text-sm text-silver/70">Coordinate appointments and mark progression through the concierge pipeline.</p>
       </div>
-      <div className="glass overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-innerGlow">
+      <div className="surface-panel overflow-hidden rounded-3xl">
         <div className="hidden overflow-x-auto sm:block">
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
             <thead className="bg-white/5 uppercase tracking-[0.35em] text-silver/60">
@@ -62,7 +62,7 @@ export default function BookingsManager({ bookings }: Props) {
             </thead>
             <tbody className="divide-y divide-white/10">
               {bookings.map((booking) => (
-                <tr key={booking.id} className="bg-black/40">
+                <tr key={booking.id} className="bg-black/60">
                   <td className="px-6 py-4 text-white">
                     <p className="font-heading text-lg">{booking.name}</p>
                     {booking.notes && <p className="text-xs text-silver/60">{booking.notes}</p>}
@@ -81,7 +81,7 @@ export default function BookingsManager({ bookings }: Props) {
                       defaultValue={booking.status}
                       onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
                       disabled={isPending}
-                      className="rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
+                      className="rounded-full border border-white/25 bg-black/60 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
                     >
                       {statuses.map((status) => (
                         <option key={status} value={status}>
@@ -105,7 +105,7 @@ export default function BookingsManager({ bookings }: Props) {
         </div>
         <div className="space-y-4 p-6 sm:hidden">
           {bookings.map((booking) => (
-            <div key={booking.id} className="rounded-3xl border border-white/10 bg-black/40 p-5">
+            <div key={booking.id} className="surface-panel rounded-3xl p-5">
               <div className="flex flex-col gap-3">
                 <div>
                   <p className="font-heading text-lg text-white">{booking.name}</p>
@@ -124,7 +124,7 @@ export default function BookingsManager({ bookings }: Props) {
                     defaultValue={booking.status}
                     onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
                     disabled={isPending}
-                    className="mt-2 w-full rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
+                    className="mt-2 w-full rounded-full border border-white/25 bg-black/60 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
                   >
                     {statuses.map((status) => (
                       <option key={status} value={status}>

@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import GlowButton from '@/components/ui/GlowButton';
 import { useRouter, useSearchParams } from 'next/navigation';
+import PageBackground from '@/components/layout/PageBackground';
 
 export default function DashboardLoginPage() {
   const router = useRouter();
@@ -36,7 +37,8 @@ export default function DashboardLoginPage() {
 
   return (
     <section className="section-padding">
-      <div className="mx-auto flex max-w-md flex-col gap-8 rounded-3xl border border-white/10 bg-black/40 p-10 shadow-innerGlow">
+      <PageBackground page="dashboard" />
+      <div className="mx-auto flex max-w-md flex-col gap-8 surface-panel rounded-3xl p-10">
         <div className="space-y-3 text-center">
           <p className="text-xs uppercase tracking-[0.55em] text-silver/60">Iliadis Admin</p>
           <h1 className="font-heading text-3xl text-white">Secure Sign-In</h1>
@@ -50,7 +52,7 @@ export default function DashboardLoginPage() {
               type="email"
               value={formState.email}
               onChange={(event) => setFormState((prev) => ({ ...prev, email: event.target.value }))}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+            className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
             />
           </div>
           <div>
@@ -60,7 +62,7 @@ export default function DashboardLoginPage() {
               type="password"
               value={formState.password}
               onChange={(event) => setFormState((prev) => ({ ...prev, password: event.target.value }))}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+            className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
             />
           </div>
           {error && <p className="text-xs uppercase tracking-[0.3em] text-rose-400">{error}</p>}

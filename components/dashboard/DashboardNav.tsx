@@ -14,7 +14,7 @@ export default function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="glass overflow-x-auto rounded-full border border-white/10 bg-black/40 shadow-innerGlow">
+    <nav className="surface-panel overflow-x-auto rounded-full">
       <ul className="flex w-full min-w-full flex-wrap items-center justify-between gap-2 p-2 sm:gap-3">
         {links.map((link) => {
           const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);

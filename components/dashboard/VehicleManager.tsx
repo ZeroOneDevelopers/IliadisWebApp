@@ -183,14 +183,14 @@ export default function VehicleManager({ vehicles }: Props) {
         </div>
       </div>
 
-      <div className="glass rounded-3xl border border-white/10 bg-black/40 p-6 shadow-innerGlow">
+      <div className="surface-panel rounded-3xl p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search inventory"
-            className="min-h-12 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-sm"
+            className="min-h-12 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-sm"
           />
           <ImportForm
             onImported={(nextVehicles) => {
@@ -216,7 +216,7 @@ export default function VehicleManager({ vehicles }: Props) {
             </thead>
             <tbody className="divide-y divide-white/10">
               {filteredVehicles.map((vehicle) => (
-                <tr key={vehicle.id} className="bg-black/40">
+                <tr key={vehicle.id} className="bg-black/60">
                   <td className="px-4 py-4 text-white">
                     <p className="font-heading text-lg">{vehicle.title}</p>
                     <p className="text-xs uppercase tracking-[0.3em] text-silver/60">{vehicle.make} · {vehicle.model}</p>
@@ -262,7 +262,7 @@ export default function VehicleManager({ vehicles }: Props) {
         {/* Mobile cards */}
         <div className="mt-6 space-y-4 sm:hidden">
           {filteredVehicles.map((vehicle) => (
-            <div key={vehicle.id} className="rounded-3xl border border-white/10 bg-black/40 p-5 shadow-innerGlow">
+            <div key={vehicle.id} className="surface-panel rounded-3xl p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="font-heading text-lg text-white">{vehicle.title}</p>
@@ -326,7 +326,7 @@ export default function VehicleManager({ vehicles }: Props) {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="glass w-full max-w-3xl rounded-t-3xl border border-white/10 bg-black/60 p-6 shadow-glow max-h-[80vh] overflow-y-auto sm:rounded-3xl sm:p-8 sm:max-h-[90vh]">
+                <Dialog.Panel className="surface-panel-strong w-full max-w-3xl rounded-t-3xl p-6 shadow-glow max-h-[80vh] overflow-y-auto sm:rounded-3xl sm:p-8 sm:max-h-[90vh]">
                   <div className="flex items-center justify-between gap-4">
                     <Dialog.Title className="font-heading text-2xl text-white">
                       {current.id ? 'Edit Vehicle' : 'New Vehicle'}
@@ -362,7 +362,7 @@ export default function VehicleManager({ vehicles }: Props) {
                           name={field.name}
                           type={field.type}
                           defaultValue={field.value ?? ''}
-                          className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                          className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
                         />
                       </label>
                     ))}
@@ -373,7 +373,7 @@ export default function VehicleManager({ vehicles }: Props) {
                         name="description"
                         defaultValue={current.description ?? ''}
                         rows={3}
-                        className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                        className="mt-3 w-full rounded-3xl border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
                       />
                     </label>
 
@@ -382,7 +382,7 @@ export default function VehicleManager({ vehicles }: Props) {
                       <input
                         name="color"
                         defaultValue={current.color ?? ''}
-                        className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                        className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
                       />
                     </label>
 
@@ -391,7 +391,7 @@ export default function VehicleManager({ vehicles }: Props) {
                       <input
                         name="location"
                         defaultValue={current.location ?? ''}
-                        className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+                        className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
                       />
                     </label>
 
@@ -401,7 +401,7 @@ export default function VehicleManager({ vehicles }: Props) {
                         name="images"
                         defaultValue={current.images.join('\n')}
                         rows={3}
-                        className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                        className="mt-3 w-full rounded-3xl border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
                       />
                     </label>
 
@@ -411,7 +411,7 @@ export default function VehicleManager({ vehicles }: Props) {
                         name="audio_urls"
                         defaultValue={current.audio_urls.join('\n')}
                         rows={3}
-                        className="mt-3 w-full rounded-3xl border border-white/20 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
+                        className="mt-3 w-full rounded-3xl border border-white/25 bg-black/60 px-4 py-3 text-sm text-white focus:border-white/60 focus:outline-none"
                       />
                     </label>
 

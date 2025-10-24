@@ -145,7 +145,7 @@ export default function Lightbox({ images, initial = 0, onClose }: LightboxProps
                     <ChevronRightIcon className="h-6 w-6" />
                   </button>
                   <div className="mt-4 flex justify-center">
-                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.35em] text-silver/70">
+                    <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-4 py-2 text-xs uppercase tracking-[0.35em] text-silver/70">
                       {index + 1} / {images.length}
                     </div>
                   </div>
