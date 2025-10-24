@@ -17,6 +17,10 @@ export type CarouselProps = {
   controlsClassName?: string;
   showDots?: boolean;
   onSlideChange?: (index: number) => void;
+  loop?: boolean;
+  autoPlay?: boolean;
+  autoPlayInterval?: number;
+  pauseOnHover?: boolean;
 };
 
 export default function Carousel({
@@ -25,53 +29,97 @@ export default function Carousel({
   className,
   controlsClassName,
   showDots = true,
-  onSlideChange
+  onSlideChange,
+  loop = false,
+  autoPlay = false,
+  autoPlayInterval = 6000,
+  pauseOnHover = false
 }: CarouselProps) {
   const [active, setActive] = useState(0);
   const [announcement, setAnnouncement] = useState('');
   const trackRef = useRef<HTMLDivElement | null>(null);
   const dragState = useRef<{ pointerId: number; startX: number; deltaX: number } | null>(null);
   const dragging = useRef(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isPointerDown, setIsPointerDown] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
   const trackId = useId();
 
-  const clampIndex = useCallback(
+  const normalizeIndex = useCallback(
     (index: number) => {
       if (slides.length === 0) return 0;
+      if (loop) {
+        const modulo = index % slides.length;
+        return modulo < 0 ? modulo + slides.length : modulo;
+      }
       return Math.min(slides.length - 1, Math.max(0, index));
     },
-    [slides.length]
+    [loop, slides.length]
   );
 
   const changeSlide = useCallback(
     (updater: number | ((current: number) => number)) => {
       setActive((current) => {
         const nextIndex = typeof updater === 'function' ? (updater as (value: number) => number)(current) : updater;
-        const clamped = clampIndex(nextIndex);
-        if (clamped !== current) {
-          setAnnouncement(`Slide ${clamped + 1} of ${slides.length}`);
-          onSlideChange?.(clamped);
+        const normalized = normalizeIndex(nextIndex);
+        if (normalized !== current) {
+          setAnnouncement(`Slide ${normalized + 1} of ${slides.length}`);
+          onSlideChange?.(normalized);
         }
-        return clamped;
+        return normalized;
       });
     },
-    [clampIndex, onSlideChange, slides.length]
+    [normalizeIndex, onSlideChange, slides.length]
   );
 
   const goToPrevious = useCallback(() => {
-    changeSlide((current) => current - 1);
-  }, [changeSlide]);
+    changeSlide((current) => {
+      if (!loop && current <= 0) return 0;
+      return current - 1;
+    });
+  }, [changeSlide, loop]);
 
   const goToNext = useCallback(() => {
-    changeSlide((current) => current + 1);
-  }, [changeSlide]);
+    changeSlide((current) => {
+      if (!loop && current >= slides.length - 1) return slides.length - 1;
+      return current + 1;
+    });
+  }, [changeSlide, loop, slides.length]);
 
   useEffect(() => {
     changeSlide(0);
   }, [changeSlide, slides.length]);
+
+  useEffect(() => {
+    if (!autoPlay || prefersReducedMotion || slides.length < 2) return;
+    if ((pauseOnHover && isHovering) || isPointerDown || isFocused) return;
+
+    const id = window.setInterval(() => {
+      changeSlide((current) => {
+        if (!loop && current >= slides.length - 1) {
+          return current;
+        }
+        return current + 1;
+      });
+    }, autoPlayInterval);
+
+    return () => window.clearInterval(id);
+  }, [
+    autoPlay,
+    autoPlayInterval,
+    changeSlide,
+    isFocused,
+    isHovering,
+    isPointerDown,
+    loop,
+    pauseOnHover,
+    prefersReducedMotion,
+    slides.length
+  ]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -92,6 +140,7 @@ export default function Carousel({
     trackRef.current.setPointerCapture(event.pointerId);
     dragState.current = { pointerId: event.pointerId, startX: event.clientX, deltaX: 0 };
     dragging.current = false;
+    setIsPointerDown(true);
   }, []);
 
   const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
@@ -121,6 +170,7 @@ export default function Carousel({
       }
       dragState.current = null;
       dragging.current = false;
+      setIsPointerDown(false);
     },
     [goToNext, goToPrevious]
   );
@@ -128,7 +178,14 @@ export default function Carousel({
   const offset = dragState.current?.deltaX ?? 0;
 
   return (
-    <div className={clsx('relative', className)}>
+    <div
+      className={clsx('relative', className)}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={pauseOnHover ? () => setIsHovering(true) : undefined}
+      onMouseLeave={pauseOnHover ? () => setIsHovering(false) : undefined}
+      onFocusCapture={() => setIsFocused(true)}
+      onBlurCapture={() => setIsFocused(false)}
+    >
       <div
         role="region"
         aria-roledescription="carousel"
@@ -144,7 +201,6 @@ export default function Carousel({
             transition: dragState.current || prefersReducedMotion ? 'none' : 'transform 500ms ease'
           }}
           tabIndex={0}
-          onKeyDown={handleKeyDown}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -171,15 +227,24 @@ export default function Carousel({
             type="button"
             className={clsx(
               'pointer-events-auto ml-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
-              active === 0 && 'opacity-40'
+              !loop && active === 0 && 'opacity-40'
             )}
-            onClick={(event) => {
-              event.stopPropagation();
+            onClick={() => {
               goToPrevious();
             }}
             aria-controls={trackId}
             aria-label="Previous slide"
-            disabled={active === 0}
+            disabled={!loop && active === 0}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                goToPrevious();
+              }
+              if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                goToNext();
+              }
+            }}
           >
             <ChevronLeftIcon className="h-5 w-5" aria-hidden />
           </button>
@@ -187,15 +252,24 @@ export default function Carousel({
             type="button"
             className={clsx(
               'pointer-events-auto mr-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
-              active === slides.length - 1 && 'opacity-40'
+              !loop && active === slides.length - 1 && 'opacity-40'
             )}
-            onClick={(event) => {
-              event.stopPropagation();
+            onClick={() => {
               goToNext();
             }}
             aria-controls={trackId}
             aria-label="Next slide"
-            disabled={active === slides.length - 1}
+            disabled={!loop && active === slides.length - 1}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                goToPrevious();
+              }
+              if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                goToNext();
+              }
+            }}
           >
             <ChevronRightIcon className="h-5 w-5" aria-hidden />
           </button>

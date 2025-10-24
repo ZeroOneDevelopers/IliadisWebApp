@@ -13,9 +13,17 @@ type Props = {
   variant?: 'detail' | 'hero';
   priority?: boolean;
   enableLightbox?: boolean;
+  fit?: 'contain' | 'cover';
 };
 
-export default function VehicleGallery({ images, title, variant = 'detail', priority = false, enableLightbox = false }: Props) {
+export default function VehicleGallery({
+  images,
+  title,
+  variant = 'detail',
+  priority = false,
+  enableLightbox = false,
+  fit = 'contain'
+}: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
 
@@ -34,6 +42,7 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
         key: `${src}-${index}`,
         label: `${title} image ${index + 1}`,
         render: () => {
+          const objectFitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
           const frame = (
             <div
               className={clsx(
@@ -46,7 +55,10 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
                   src={src}
                   alt={`${title} image ${index + 1}`}
                   fill
-                  className="object-contain object-center transition-transform duration-500 group-hover:scale-[1.015]"
+                  className={clsx(
+                    objectFitClass,
+                    'object-center transition-transform duration-500 group-hover:scale-[1.015]'
+                  )}
                   sizes={sizes}
                   quality={variant === 'hero' ? 95 : 92}
                   priority={priority && index === 0}
@@ -78,7 +90,7 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
           );
         }
       })),
-    [aspectClass, enableLightbox, images, priority, sizes, title, variant]
+    [aspectClass, enableLightbox, fit, images, priority, sizes, title, variant]
   );
 
   return (
