@@ -8,6 +8,21 @@ import PageBackground from '@/components/layout/PageBackground';
 
 export const revalidate = 0;
 
+const HOME_HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=2400&q=80',
+    alt: 'Ferrari SF90 parked inside a dimly lit concrete atrium'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=2400&q=80',
+    alt: 'Bentley interior with quilted leather and illuminated console'
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=2400&q=80',
+    alt: 'Lamborghini Aventador accelerating through a tunnel at night'
+  }
+] as const;
+
 export default async function HomePage() {
   const featuredVehicles = await prisma.vehicle.findMany({
     where: { featured: true },
@@ -19,7 +34,7 @@ export default async function HomePage() {
   return (
     <>
       <PageBackground page="home" />
-      <Hero />
+      <Hero slides={HOME_HERO_SLIDES} />
       <Highlights />
       <section className="section-padding">
         <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6 lg:px-8">

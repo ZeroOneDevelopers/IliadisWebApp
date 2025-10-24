@@ -86,6 +86,7 @@ export default async function CarDetailsPage({ params }: Props) {
             title={showroomVehicle.title}
             priority
             variant="hero"
+            fit="cover"
             enableLightbox
           />
           <div className="surface-panel-strong space-y-6 rounded-3xl p-8 sm:p-10">
@@ -128,18 +129,18 @@ export default async function CarDetailsPage({ params }: Props) {
             <p className="text-xs uppercase tracking-[0.3em] text-silver/50">
               Engine audio placeholder — replace with bespoke rev sample from dashboard upload.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-              <GlowButton href={`/test-drive?vehicle=${encodeURIComponent(showroomVehicle.title)}`} className="w-full sm:w-auto">
-                Book Test Drive
-              </GlowButton>
-              <GlowButton href="https://wa.me/302101234567" variant="secondary" className="w-full sm:w-auto">
-                WhatsApp Concierge
-              </GlowButton>
-              <GlowButton href="#enquiry" variant="secondary" className="w-full sm:w-auto">
-                Enquire
-              </GlowButton>
-            </div>
           </div>
+        </div>
+        <div className="surface-panel-strong flex flex-col gap-4 rounded-3xl p-8 sm:flex-row sm:flex-wrap sm:p-10">
+          <GlowButton href={`/test-drive?vehicle=${encodeURIComponent(showroomVehicle.title)}`} className="w-full sm:w-auto">
+            Book Test Drive
+          </GlowButton>
+          <GlowButton href="https://wa.me/302101234567" variant="secondary" className="w-full sm:w-auto">
+            WhatsApp Concierge
+          </GlowButton>
+          <GlowButton href="#enquiry" variant="secondary" className="w-full sm:w-auto">
+            Enquire
+          </GlowButton>
         </div>
         {showroomVehicle.description && (
           <div className="mx-auto max-w-4xl space-y-4 rounded-3xl surface-panel p-8 text-silver/70">
