@@ -10,6 +10,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'car.gr' },
       { protocol: 'https', hostname: 'www.car.gr' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' }
       // πρόσθεσε ό,τι άλλο χρησιμοποιείς (imgur, cloudfront κ.λπ.)
     ],
     // προαιρετικό, για πιο καθαρές αποδόσεις σε retina:

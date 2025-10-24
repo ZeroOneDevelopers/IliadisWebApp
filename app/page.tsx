@@ -7,18 +7,19 @@ import { enrichVehicle } from '@/lib/vehicles';
 import PageBackground from '@/components/layout/PageBackground';
 
 export const revalidate = 0;
+type Slide = { src: string; alt: string };
 
-const HOME_HERO_SLIDES = [
+const HOME_HERO_SLIDES: Slide[] = [
   {
-    src: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=2400&q=80',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipPEuQJ4gtwXEfzXPdjF5puoZ1JxospM5dZblV6j=s1360-w1360-h1020-rw',
     alt: 'Ferrari SF90 parked inside a dimly lit concrete atrium'
   },
   {
-    src: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=2400&q=80',
+    src: 'https://lh3.googleusercontent.com/p/AF1QipNhyV71YbqktMn1_nAa5fxxIKvxnmxhE-eclpKS=s1360-w1360-h1020-rw',
     alt: 'Bentley interior with quilted leather and illuminated console'
   },
   {
-    src: 'https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=2400&q=80',
+    src: 'https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqVorWJzX_XPFW9rlHFiYc7nRba9CucvTT-007CCfKzlK7ieXHV_K4K0gDFvL-a2TXtmWReDK8SgvY4p60NBp22EscyF26kdAjP59dBAQfOIGbXgQzF5MfwIXcpdPYjnujCiIw=s1360-w1360-h1020-rw',
     alt: 'Lamborghini Aventador accelerating through a tunnel at night'
   }
 ] as const;
