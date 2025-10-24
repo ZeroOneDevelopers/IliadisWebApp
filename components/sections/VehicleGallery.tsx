@@ -21,21 +21,18 @@ export default function VehicleGallery({
   title,
   variant = 'detail',
   priority = false,
-  enableLightbox = false,
-  fit = 'contain'
+  enableLightbox,
+  fit = 'cover'
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
 
   const aspectClass = variant === 'hero' ? 'aspect-[16/9]' : 'aspect-[4/3] md:aspect-[16/9]';
   const isDetailVariant = variant === 'detail';
-  const sizes = useMemo(
-    () =>
-      variant === 'hero'
-        ? '(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 60vw'
-        : '(max-width: 768px) 100vw, (max-width: 1280px) 60vw, 40vw',
-    [variant]
-  );
+  const sizes =
+    variant === 'hero'
+      ? '(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 60vw'
+      : '(max-width: 768px) 100vw, (max-width: 1280px) 60vw, 40vw';
 
   const slides = useMemo(
     () =>
@@ -58,10 +55,7 @@ export default function VehicleGallery({
                   src={src}
                   alt={`${title} image ${index + 1}`}
                   fill
-                  className={clsx(
-                    objectFitClass,
-                    'object-center transition-transform duration-500 group-hover:scale-[1.015]'
-                  )}
+                  className={clsx(objectFitClass, 'object-center transition-transform duration-500 group-hover:scale-[1.015]')}
                   sizes={sizes}
                   quality={variant === 'hero' ? 95 : 94}
                   priority={priority && index === 0}
@@ -76,9 +70,7 @@ export default function VehicleGallery({
             </div>
           );
 
-          if (!enableLightbox) {
-            return <div className={clsx('relative w-full', aspectClass)}>{frame}</div>;
-          }
+          if (!enableLightbox) return <div className={clsx('relative w-full', aspectClass)}>{frame}</div>;
 
           return (
             <div className={clsx('relative w-full', aspectClass)}>
@@ -94,7 +86,7 @@ export default function VehicleGallery({
           );
         }
       })),
-    [aspectClass, enableLightbox, fit, images, priority, sizes, title, variant]
+    [aspectClass, enableLightbox, fit, images, priority, sizes, title, variant, isDetailVariant]
   );
 
   return (
@@ -104,15 +96,19 @@ export default function VehicleGallery({
         ariaLabel={`${title} gallery`}
         className="relative"
         controlsClassName="px-2"
-        onSlideChange={(index) => setActiveIndex(index)}
+        onActiveIndexChange={(i) => setActiveIndex(i)} 
       />
 
+
+
       {enableLightbox && lightbox.open && (
-        <Lightbox images={images} initial={lightbox.index} onClose={() => setLightbox({ open: false, index: activeIndex })} />
+        <Lightbox
+          images={images}
+          initial={lightbox.index}
+          onClose={() => setLightbox({ open: false, index: activeIndex })}
+        />
       )}
+
     </div>
   );
 }
-
-// REQUIRED ASSETS (not included):
-// none

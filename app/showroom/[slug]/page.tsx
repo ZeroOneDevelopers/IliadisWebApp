@@ -125,7 +125,11 @@ export default async function CarDetailsPage({ params }: Props) {
                 <p className="mt-1 text-lg text-white">{formatCurrency(showroomVehicle.price)}</p>
               </div>
             </div>
-            <LuxAudioPlayer src={showroomVehicle.audioSample ?? '/sounds/rev.mp3'} />
+            <LuxAudioPlayer
+              src={showroomVehicle.audioSample ? encodeURI(showroomVehicle.audioSample) : '/sounds/engine-start.mp3'}
+            />
+
+
             <p className="text-xs uppercase tracking-[0.3em] text-silver/50">
               Engine audio placeholder — replace with bespoke rev sample from dashboard upload.
             </p>

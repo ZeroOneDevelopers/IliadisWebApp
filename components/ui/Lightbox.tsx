@@ -1,168 +1,173 @@
 'use client';
 
-import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
 
-type LightboxProps = {
+type Props = {
   images: string[];
   initial?: number;
-  onClose?: () => void;
+  onClose: () => void;
 };
 
-export default function Lightbox({ images, initial = 0, onClose }: LightboxProps) {
-  if (images.length === 0) return null;
+export default function Lightbox({ images, initial = 0, onClose }: Props) {
+  const [index, setIndex] = useState(() => Math.min(Math.max(initial, 0), images.length - 1));
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const drag = useRef<{ startX: number; dx: number } | null>(null);
 
-  const [open, setOpen] = useState(true);
-  const [index, setIndex] = useState(initial);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const instructionsId = useId();
+  const go = useCallback((delta: number) => {
+    setIndex((i) => Math.min(images.length - 1, Math.max(0, i + delta)));
+  }, [images.length]);
 
+  const goPrev = useCallback(() => go(-1), [go]);
+  const goNext = useCallback(() => go(+1), [go]);
+
+  // ESC / arrows
   useEffect(() => {
-    setIndex(initial);
-  }, [initial]);
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [goNext, goPrev, onClose]);
 
-  const close = useCallback(() => {
-    setOpen(false);
+  // lock scroll
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const prev = useCallback(() => {
-    setIndex((current) => (current - 1 + images.length) % images.length);
-  }, [images.length]);
-
-  const next = useCallback(() => {
-    setIndex((current) => (current + 1) % images.length);
-  }, [images.length]);
-
-  useEffect(() => {
-    function handleKey(event: KeyboardEvent) {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        prev();
-      }
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        next();
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        close();
-      }
-    }
-
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [close, next, prev]);
-
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    setTouchStart(event.touches[0]?.clientX ?? null);
+  // close on backdrop click
+  const onBackdrop = (e: React.MouseEvent) => {
+    if (e.target === containerRef.current) onClose();
   };
 
-  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (touchStart === null) return;
-    const delta = event.touches[0]?.clientX ?? touchStart;
-    const diff = delta - touchStart;
-    if (Math.abs(diff) > 60) {
-      if (diff > 0) {
-        prev();
-      } else {
-        next();
-      }
-      setTouchStart(null);
-    }
+  // touch/drag to navigate
+  const onPointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    drag.current = { startX: e.clientX, dx: 0 };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current) return;
+    drag.current.dx = e.clientX - drag.current.startX;
+  };
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!drag.current) return;
+    const dx = drag.current.dx;
+    const threshold = (e.currentTarget as HTMLElement).clientWidth * 0.15;
+    if (dx > threshold) goPrev();
+    else if (dx < -threshold) goNext();
+    drag.current = null;
   };
 
-  const handleTouchEnd = () => {
-    setTouchStart(null);
-  };
+  const src = images[index] ?? images[0];
 
-  return (
-    <Transition show={open} as={Fragment} appear afterLeave={onClose}>
-      <Dialog onClose={close} className="relative z-[100]">
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-150"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/90 backdrop-blur" />
-        </Transition.Child>
+  const portal = (
+    <div
+      ref={containerRef}
+      onClick={onBackdrop}
+      className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Close */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+        aria-label="Close"
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-200"
-            enterFrom="opacity-0 translate-y-2"
-            enterTo="opacity-100 translate-y-0"
-            leave="ease-in duration-150"
-            leaveFrom="opacity-100 translate-y-0"
-            leaveTo="opacity-0 translate-y-2"
-          >
-            <Dialog.Panel className="relative w-full max-w-5xl" aria-describedby={instructionsId}>
-              <Dialog.Title className="sr-only">{`Viewing ${images.length} images`}</Dialog.Title>
-              <p id={instructionsId} className="sr-only">
-                Use left and right arrow keys or swipe to navigate vehicle images. Press Escape to close.
-              </p>
-              <button
-                type="button"
-                onClick={close}
-                className="absolute right-4 top-4 z-20 rounded-full border border-white/20 bg-black/60 p-2 text-white transition hover:border-white/50 hover:text-white"
-                aria-label="Close gallery"
-              >
-                <XMarkIcon className="h-5 w-5" />
-              </button>
-              <div
-                className="relative aspect-[16/9] overflow-hidden rounded-3xl border border-white/10 bg-black"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <Image
-                  src={images[index]}
-                  alt="Vehicle gallery image"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  quality={95}
-                  className="object-contain"
-                  priority
-                />
-              </div>
-              {images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={prev}
-                    className="absolute left-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/50 p-3 text-white backdrop-blur transition hover:border-white/60"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeftIcon className="h-6 w-6" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={next}
-                    className="absolute right-4 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/50 p-3 text-white backdrop-blur transition hover:border-white/60"
-                    aria-label="Next image"
-                  >
-                    <ChevronRightIcon className="h-6 w-6" />
-                  </button>
-                  <div className="mt-4 flex justify-center">
-                    <div className="flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-4 py-2 text-xs uppercase tracking-[0.35em] text-silver/70">
-                      {index + 1} / {images.length}
-                    </div>
-                  </div>
-                </>
-              )}
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition>
+      {/* Prev */}
+      <button
+        type="button"
+        onClick={goPrev}
+        disabled={index === 0}
+        className={clsx(
+          'absolute left-4 sm:left-6 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white hover:border-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+          index === 0 && 'opacity-40'
+        )}
+        aria-label="Previous image"
+      >
+        <ChevronLeftIcon className="h-6 w-6" />
+      </button>
+
+      {/* Next */}
+      <button
+        type="button"
+        onClick={goNext}
+        disabled={index === images.length - 1}
+        className={clsx(
+          'absolute right-4 sm:right-6 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white hover:border-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+          index === images.length - 1 && 'opacity-40'
+        )}
+        aria-label="Next image"
+      >
+        <ChevronRightIcon className="h-6 w-6" />
+      </button>
+
+      {/* Image area */}
+    <div
+      className="relative mx-4 w-full max-w-6xl z-10"   // <-- z-10
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
+      <div className="relative aspect-video">
+        <Image
+          src={src}
+          alt={`Image ${index + 1} of ${images.length}`}
+          fill
+          sizes="100vw"
+          className="object-contain select-none"
+          draggable={false}
+          priority
+        />
+      </div>
+      <div className="mt-3 text-center text-xs uppercase tracking-[0.35em] text-white/70">
+        {index + 1} / {images.length}
+      </div>
+    </div>
+
+    {/* Prev */}
+    <button
+      type="button"
+      onClick={goPrev}
+      disabled={index === 0}
+      className={clsx(
+        'absolute left-4 sm:left-6 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white hover:border-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 z-20', // <-- z-20
+        index === 0 && 'opacity-40'
+      )}
+      aria-label="Previous image"
+    >
+      <ChevronLeftIcon className="h-6 w-6" />
+    </button>
+
+    {/* Next */}
+    <button
+      type="button"
+      onClick={goNext}
+      disabled={index === images.length - 1}
+      className={clsx(
+        'absolute right-4 sm:right-6 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white hover:border-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 z-20', // <-- z-20
+        index === images.length - 1 && 'opacity-40'
+      )}
+      aria-label="Next image"
+    >
+      <ChevronRightIcon className="h-6 w-6" />
+    </button>
+    </div>
   );
-}
 
-// REQUIRED ASSETS (not included):
-// none
+  // render via portal
+  const target = typeof window !== 'undefined' ? document.body : null;
+  return target ? createPortal(portal, target) : null;
+}

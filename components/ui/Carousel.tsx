@@ -16,11 +16,15 @@ export type CarouselProps = {
   className?: string;
   controlsClassName?: string;
   showDots?: boolean;
-  onSlideChange?: (index: number) => void;
   loop?: boolean;
   autoPlay?: boolean;
   autoPlayInterval?: number;
   pauseOnHover?: boolean;
+
+  /** Controlled API (optional) */
+  activeIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
+  initialIndex?: number;
 };
 
 export default function Carousel({
@@ -29,13 +33,18 @@ export default function Carousel({
   className,
   controlsClassName,
   showDots = true,
-  onSlideChange,
   loop = false,
   autoPlay = false,
   autoPlayInterval = 6000,
-  pauseOnHover = false
+  pauseOnHover = false,
+  activeIndex: controlledIndex,
+  onActiveIndexChange,
+  initialIndex = 0
 }: CarouselProps) {
-  const [active, setActive] = useState(0);
+  const isControlled = controlledIndex != null;
+  const [uncontrolledIndex, setUncontrolledIndex] = useState(initialIndex);
+  const active = isControlled ? (controlledIndex as number) : uncontrolledIndex;
+
   const [announcement, setAnnouncement] = useState('');
   const trackRef = useRef<HTMLDivElement | null>(null);
   const dragState = useRef<{ pointerId: number; startX: number; deltaX: number } | null>(null);
@@ -49,133 +58,119 @@ export default function Carousel({
   }, []);
   const trackId = useId();
 
-  const normalizeIndex = useCallback(
-    (index: number) => {
-      if (slides.length === 0) return 0;
-      if (loop) {
-        const modulo = index % slides.length;
-        return modulo < 0 ? modulo + slides.length : modulo;
-      }
-      return Math.min(slides.length - 1, Math.max(0, index));
-    },
-    [loop, slides.length]
-  );
+  const normalize = useCallback((next: number) => {
+    const len = slides.length || 1;
+    if (loop) {
+      return ((next % len) + len) % len;
+    }
+    return Math.min(len - 1, Math.max(0, next));
+  }, [loop, slides.length]);
 
-  const changeSlide = useCallback(
-    (updater: number | ((current: number) => number)) => {
-      setActive((current) => {
-        const nextIndex = typeof updater === 'function' ? (updater as (value: number) => number)(current) : updater;
-        const normalized = normalizeIndex(nextIndex);
-        if (normalized !== current) {
-          setAnnouncement(`Slide ${normalized + 1} of ${slides.length}`);
-          onSlideChange?.(normalized);
-        }
-        return normalized;
-      });
-    },
-    [normalizeIndex, onSlideChange, slides.length]
-  );
+  const setActive = useCallback((next: number) => {
+    const normalized = normalize(next);
+    if (normalized === active) return;
+    if (isControlled) {
+      onActiveIndexChange?.(normalized);
+    } else {
+      setUncontrolledIndex(normalized);
+      onActiveIndexChange?.(normalized);
+    }
+  }, [active, isControlled, normalize, onActiveIndexChange]);
 
-  const goToPrevious = useCallback(() => {
-    changeSlide((current) => {
-      if (!loop && current <= 0) return 0;
-      return current - 1;
-    });
-  }, [changeSlide, loop]);
+  const goToPrevious = useCallback(() => setActive(active - 1), [active, setActive]);
+  const goToNext     = useCallback(() => setActive(active + 1), [active, setActive]);
 
-  const goToNext = useCallback(() => {
-    changeSlide((current) => {
-      if (!loop && current >= slides.length - 1) return slides.length - 1;
-      return current + 1;
-    });
-  }, [changeSlide, loop, slides.length]);
+  // Ανακοίνωση/ARIA & live region, κάθε φορά που αλλάζει το active
+  useEffect(() => {
+    if (slides.length > 0) setAnnouncement(`Slide ${active + 1} of ${slides.length}`);
+  }, [active, slides.length]);
 
   useEffect(() => {
-    changeSlide(0);
-  }, [changeSlide, slides.length]);
+  const onResize = () => { dragState.current = null; };
+  window.addEventListener('resize', onResize);
+  return () => window.removeEventListener('resize', onResize);
+}, []);
 
+
+  // Auto-play
   useEffect(() => {
     if (!autoPlay || prefersReducedMotion || slides.length < 2) return;
     if ((pauseOnHover && isHovering) || isPointerDown || isFocused) return;
 
     const id = window.setInterval(() => {
-      changeSlide((current) => {
-        if (!loop && current >= slides.length - 1) {
-          return current;
-        }
-        return current + 1;
-      });
+      // χρησιμοποίησε την setActive με βάση το τρέχον active
+      setActive(active + 1);
     }, autoPlayInterval);
 
     return () => window.clearInterval(id);
   }, [
+    active,
     autoPlay,
     autoPlayInterval,
-    changeSlide,
     isFocused,
     isHovering,
     isPointerDown,
-    loop,
     pauseOnHover,
     prefersReducedMotion,
+    setActive,
     slides.length
   ]);
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        goToPrevious();
-      }
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        goToNext();
-      }
-    },
-    [goToNext, goToPrevious]
-  );
+    // μέσα στο Carousel
 
-  const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    if (!trackRef.current) return;
-    trackRef.current.setPointerCapture(event.pointerId);
-    dragState.current = { pointerId: event.pointerId, startX: event.clientX, deltaX: 0 };
-    dragging.current = false;
-    setIsPointerDown(true);
-  }, []);
+    const DRAG_THRESHOLD = 14; // px
 
-  const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-    const state = dragState.current;
-    if (!state || state.pointerId !== event.pointerId) return;
-    state.deltaX = event.clientX - state.startX;
-    if (!dragging.current && Math.abs(state.deltaX) > 12) {
-      dragging.current = true;
-    }
-  }, []);
+    const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+      // ΜΟΝΟ κρατάμε state – ΔΕΝ κάνουμε setPointerCapture εδώ
+      dragState.current = { pointerId: e.pointerId, startX: e.clientX, deltaX: 0 };
+      dragging.current = false;
+      setIsPointerDown(true);
+    }, []);
 
-  const handlePointerUp = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      if (!trackRef.current) return;
+    const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
       const state = dragState.current;
-      if (!state || state.pointerId !== event.pointerId) return;
-      trackRef.current.releasePointerCapture(event.pointerId);
-      const threshold = trackRef.current.clientWidth * 0.15;
-      if (state.deltaX > threshold) {
-        goToPrevious();
-      } else if (state.deltaX < -threshold) {
-        goToNext();
+      if (!state || state.pointerId !== e.pointerId) return;
+      state.deltaX = e.clientX - state.startX;
+
+      // Όταν ξεπεράσουμε το threshold, τότε κάνε capture & μπες σε drag
+      if (!dragging.current && Math.abs(state.deltaX) > DRAG_THRESHOLD) {
+        dragging.current = true;
+        trackRef.current?.setPointerCapture(e.pointerId);
       }
-      if (dragging.current) {
-        event.preventDefault();
-        event.stopPropagation();
+    }, []);
+
+    const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+      const state = dragState.current;
+      if (!state || state.pointerId !== e.pointerId) return;
+
+      // Αν είχαμε πάρει capture, άφησέ το
+      try { trackRef.current?.releasePointerCapture(e.pointerId); } catch {}
+
+      const threshold = (trackRef.current?.clientWidth ?? 0) * 0.15;
+      const didSwipe = Math.abs(state.deltaX) > threshold;
+
+      if (state.deltaX > threshold) goToPrevious();
+      else if (state.deltaX < -threshold) goToNext();
+
+      // ΜΟΝΟ αν έγινε swipe, μπλόκαρε το click
+      if (didSwipe) {
+        e.preventDefault();
+        e.stopPropagation();
       }
+
       dragState.current = null;
       dragging.current = false;
       setIsPointerDown(false);
-    },
-    [goToNext, goToPrevious]
-  );
+    }, [goToNext, goToPrevious]);
+ 
+
 
   const offset = dragState.current?.deltaX ?? 0;
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowLeft') { event.preventDefault(); goToPrevious(); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); goToNext(); }
+  }, [goToNext, goToPrevious]);
 
   return (
     <div
@@ -186,12 +181,7 @@ export default function Carousel({
       onFocusCapture={() => setIsFocused(true)}
       onBlurCapture={() => setIsFocused(false)}
     >
-      <div
-        role="region"
-        aria-roledescription="carousel"
-        aria-label={ariaLabel}
-        className="relative"
-      >
+      <div role="region" aria-roledescription="carousel" aria-label={ariaLabel} className="relative">
         <div
           id={trackId}
           ref={trackRef}
@@ -205,6 +195,7 @@ export default function Carousel({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
+          onPointerLeave={handlePointerUp}
         >
           {slides.map((slide, index) => (
             <div
@@ -229,24 +220,10 @@ export default function Carousel({
               'pointer-events-auto ml-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
               !loop && active === 0 && 'opacity-40'
             )}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              goToPrevious();
-            }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToPrevious(); }}
             aria-controls={trackId}
             aria-label="Previous slide"
             disabled={!loop && active === 0}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                goToPrevious();
-              }
-              if (event.key === 'ArrowRight') {
-                event.preventDefault();
-                goToNext();
-              }
-            }}
           >
             <ChevronLeftIcon className="h-5 w-5" aria-hidden />
           </button>
@@ -256,24 +233,10 @@ export default function Carousel({
               'pointer-events-auto mr-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
               !loop && active === slides.length - 1 && 'opacity-40'
             )}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              goToNext();
-            }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); goToNext(); }}
             aria-controls={trackId}
             aria-label="Next slide"
             disabled={!loop && active === slides.length - 1}
-            onKeyDown={(event) => {
-              if (event.key === 'ArrowLeft') {
-                event.preventDefault();
-                goToPrevious();
-              }
-              if (event.key === 'ArrowRight') {
-                event.preventDefault();
-                goToNext();
-              }
-            }}
           >
             <ChevronRightIcon className="h-5 w-5" aria-hidden />
           </button>
@@ -293,11 +256,7 @@ export default function Carousel({
                 )}
                 aria-label={`Go to slide ${index + 1}`}
                 aria-controls={trackId}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  changeSlide(index);
-                }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActive(index); }}
               />
             ))}
           </div>
@@ -310,6 +269,3 @@ export default function Carousel({
     </div>
   );
 }
-
-// REQUIRED ASSETS (not included):
-// none

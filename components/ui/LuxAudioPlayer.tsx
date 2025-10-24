@@ -3,16 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PauseIcon, PlayIcon } from '@heroicons/react/24/solid';
 
-type Props = {
-  src: string;
-};
+type Props = { src: string };
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
   const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, '0');
+  const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
   return `${mins}:${secs}`;
 }
 
@@ -24,51 +20,42 @@ export default function LuxAudioPlayer({ src }: Props) {
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    const el = audioRef.current;
+    if (!el) return;
 
-    function handlePlay() {
-      setIsPlaying(true);
-    }
-
-    function handlePause() {
-      setIsPlaying(false);
-    }
-
-    function handleTimeUpdate() {
-      setCurrent(audio.currentTime);
-      setDuration(audio.duration || 0);
-      if (audio.duration) {
-        setProgress((audio.currentTime / audio.duration) * 100);
-      }
-    }
-
-    function handleEnded() {
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleTimeUpdate = () => {
+      setCurrent(el.currentTime);
+      setDuration(el.duration || 0);
+      if (el.duration) setProgress((el.currentTime / el.duration) * 100);
+    };
+    const handleEnded = () => {
       setIsPlaying(false);
       setProgress(0);
       setCurrent(0);
-    }
+    };
 
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('loadedmetadata', handleTimeUpdate);
+    el.addEventListener('play', handlePlay);
+    el.addEventListener('pause', handlePause);
+    el.addEventListener('timeupdate', handleTimeUpdate);
+    el.addEventListener('ended', handleEnded);
+    el.addEventListener('loadedmetadata', handleTimeUpdate);
 
     return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('loadedmetadata', handleTimeUpdate);
+      el.removeEventListener('play', handlePlay);
+      el.removeEventListener('pause', handlePause);
+      el.removeEventListener('timeupdate', handleTimeUpdate);
+      el.removeEventListener('ended', handleEnded);
+      el.removeEventListener('loadedmetadata', handleTimeUpdate);
     };
   }, []);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    audio.currentTime = 0;
+    const el = audioRef.current;
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
     setIsPlaying(false);
     setProgress(0);
     setCurrent(0);
@@ -77,24 +64,18 @@ export default function LuxAudioPlayer({ src }: Props) {
   const timeSummary = useMemo(() => `${formatTime(current)} / ${formatTime(duration)}`, [current, duration]);
 
   function togglePlayback() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {
-        // Ignore autoplay restriction errors
-      });
-    }
+    const el = audioRef.current;
+    if (!el) return;
+    if (isPlaying) el.pause();
+    else el.play().catch(() => {});
   }
 
   function handleSeek(event: React.MouseEvent<HTMLDivElement>) {
-    const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
-
+    const el = audioRef.current;
+    if (!el || !el.duration) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const ratio = (event.clientX - rect.left) / rect.width;
-    audio.currentTime = Math.max(0, Math.min(audio.duration * ratio, audio.duration));
+    el.currentTime = Math.max(0, Math.min(el.duration * ratio, el.duration));
   }
 
   return (
@@ -107,12 +88,9 @@ export default function LuxAudioPlayer({ src }: Props) {
       >
         {isPlaying ? <PauseIcon className="h-6 w-6" /> : <PlayIcon className="h-6 w-6" />}
       </button>
+
       <div className="flex-1 space-y-2">
-        <div
-          className="relative h-2 cursor-pointer overflow-hidden rounded-full bg-white/10"
-          onClick={handleSeek}
-          role="presentation"
-        >
+        <div className="relative h-2 cursor-pointer overflow-hidden rounded-full bg-white/10" onClick={handleSeek} role="presentation">
           <div className="absolute inset-y-0 left-0 rounded-full bg-white/80 transition-[width] duration-300" style={{ width: `${progress}%` }} />
           <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </div>
@@ -121,6 +99,7 @@ export default function LuxAudioPlayer({ src }: Props) {
           <span>{timeSummary}</span>
         </div>
       </div>
+
       <audio ref={audioRef} src={src} preload="metadata" />
     </div>
   );

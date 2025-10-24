@@ -25,7 +25,6 @@ export default function Hero({ slides }: HeroProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 600], [0, 120]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0.3]);
 
   useEffect(() => {
     const audio = new Audio('/sounds/rev.mp3');
@@ -79,7 +78,7 @@ export default function Hero({ slides }: HeroProps) {
         className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.3),transparent_65%)]/60"
         aria-hidden
       />
-      <motion.div style={{ y, opacity }} className="relative z-30 section-padding pb-40 sm:pb-48">
+        <motion.div style={{ y }} className="relative z-30 section-padding pb-40 sm:pb-48">
         <div className="surface-panel-strong max-w-3xl rounded-3xl border-white/15 p-8 sm:p-10">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
