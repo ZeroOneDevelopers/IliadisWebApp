@@ -91,7 +91,7 @@ export default function TestDriveClient({ vehicles }: Props) {
 
   return (
     <div className="mx-auto grid max-w-5xl gap-12 px-4 sm:px-6 lg:grid-cols-[1.2fr_1fr]">
-      <div className="glass rounded-3xl border border-white/10 bg-black/30 p-10 shadow-innerGlow">
+      <div className="surface-panel-strong rounded-3xl p-10">
         <p className="text-xs uppercase tracking-[0.55em] text-silver/60">Book A Private Experience</p>
         <h1 className="mt-4 font-heading text-4xl text-white">Test Drive Concierge</h1>
         <p className="mt-3 text-sm text-silver/70">
@@ -111,7 +111,7 @@ export default function TestDriveClient({ vehicles }: Props) {
                 value={formState[input.field as keyof FormState] as string}
                 onChange={(event) => setFormState((prev) => ({ ...prev, [input.field]: event.target.value }))}
                 placeholder={input.placeholder}
-                className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none min-h-12"
+                className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none min-h-12"
               />
             </div>
           ))}
@@ -129,7 +129,7 @@ export default function TestDriveClient({ vehicles }: Props) {
                 }));
               }}
               disabled={!hasVehicles}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 min-h-12"
+              className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 min-h-12"
             >
               <option value="" disabled>
                 {hasVehicles ? 'Select a vehicle' : 'Inventory required'}
@@ -143,13 +143,13 @@ export default function TestDriveClient({ vehicles }: Props) {
           </div>
           <div>
             <label className="text-xs uppercase tracking-[0.4em] text-silver/60">Preferred Date</label>
-              <input
-                required={hasVehicles}
+            <input
+              required={hasVehicles}
               type="date"
               value={formState.preferredDate}
               onChange={(event) => setFormState((prev) => ({ ...prev, preferredDate: event.target.value }))}
               disabled={!hasVehicles}
-              className="mt-3 w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
+              className="mt-3 w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white focus:border-white/60 focus:outline-none min-h-12"
             />
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">
@@ -186,7 +186,7 @@ export default function TestDriveClient({ vehicles }: Props) {
         </AnimatePresence>
       </div>
       <div className="space-y-6">
-        <div className="glass rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-transparent to-transparent p-10 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-10">
           <h2 className="font-heading text-2xl text-white">Concierge Privileges</h2>
           <ul className="mt-4 space-y-4 text-sm text-silver/70">
             <li>• Private lounge reception in Athens with signature welcome ritual.</li>
@@ -195,7 +195,7 @@ export default function TestDriveClient({ vehicles }: Props) {
             <li>• Opportunity to explore financing or trade-in packages.</li>
           </ul>
         </div>
-        <div className="glass rounded-3xl border border-white/10 bg-black/40 p-10 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-10">
           <h2 className="font-heading text-2xl text-white">Need Immediate Assistance?</h2>
           <p className="mt-3 text-sm text-silver/70">
             Call our executive line at <a href="tel:+306946061486" className="text-white">+30 694 606 1486</a> or visit the showroom at

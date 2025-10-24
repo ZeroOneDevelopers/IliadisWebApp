@@ -70,7 +70,7 @@ export default function ShowroomClient({ vehicles, brandOptions, fuelOptions, tr
         ))}
       </motion.div>
       {filteredVehicles.length === 0 && (
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-12 text-center text-sm text-silver/60">
+        <div className="surface-panel rounded-3xl p-12 text-center text-sm text-silver/60">
           No vehicles found for this combination. Our concierge can source it privately.
           <div className="mt-6 flex justify-center">
             <GlowButton href="mailto:liaison@iliadis.gr" variant="secondary" className="w-full max-w-xs sm:w-auto">

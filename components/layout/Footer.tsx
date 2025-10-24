@@ -10,7 +10,7 @@ const footerLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-black/40">
+    <footer className="border-t border-white/10 bg-black/60">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-12">
         <div className="space-y-3 text-sm text-silver/70">
           <p className="uppercase tracking-[0.35em] text-silver">Iliadis Executive Cars</p>

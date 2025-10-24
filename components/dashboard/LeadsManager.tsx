@@ -36,7 +36,7 @@ export default function LeadsManager({ leads }: Props) {
         <h1 className="font-heading text-3xl text-white">Lead Registry</h1>
         <p className="text-sm text-silver/70">Review inbound enquiries with direct contact details for rapid follow-up.</p>
       </div>
-      <div className="glass overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-innerGlow">
+      <div className="surface-panel overflow-hidden rounded-3xl">
         <div className="hidden overflow-x-auto sm:block">
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
             <thead className="bg-white/5 uppercase tracking-[0.35em] text-silver/60">
@@ -51,7 +51,7 @@ export default function LeadsManager({ leads }: Props) {
             </thead>
             <tbody className="divide-y divide-white/10">
               {leads.map((lead) => (
-                <tr key={lead.id} className="bg-black/40">
+                <tr key={lead.id} className="bg-black/60">
                   <td className="px-6 py-4 text-white">
                     <p className="font-heading text-lg">{lead.name}</p>
                     {lead.message && <p className="text-xs text-silver/60">{lead.message}</p>}
@@ -89,7 +89,7 @@ export default function LeadsManager({ leads }: Props) {
         </div>
         <div className="space-y-4 p-6 sm:hidden">
           {leads.map((lead) => (
-            <div key={lead.id} className="rounded-3xl border border-white/10 bg-black/40 p-5">
+            <div key={lead.id} className="surface-panel rounded-3xl p-5">
               <div className="flex flex-col gap-3">
                 <div>
                   <p className="font-heading text-lg text-white">{lead.name}</p>

@@ -53,19 +53,19 @@ export default function DashboardOverview({ leads, stats }: Props) {
         </p>
       </header>
       <div className="grid gap-6 md:grid-cols-4">
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-6">
           <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Total Vehicles</p>
           <p className="mt-4 font-heading text-3xl text-white">{stats.totalVehicles}</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-6">
           <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Featured</p>
           <p className="mt-4 font-heading text-3xl text-white">{stats.featuredVehicles}</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-6">
           <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Total Leads</p>
           <p className="mt-4 font-heading text-3xl text-white">{stats.totalLeads}</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-6 shadow-innerGlow">
+        <div className="surface-panel rounded-3xl p-6">
           <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Pending Bookings</p>
           <p className="mt-4 font-heading text-3xl text-white">{stats.pendingBookings}</p>
         </div>
@@ -76,7 +76,7 @@ export default function DashboardOverview({ leads, stats }: Props) {
             key={card.value}
             onClick={() => setFilter(card.value)}
             whileHover={{ y: -6 }}
-            className={`rounded-3xl border border-white/10 p-6 text-left transition-all duration-500 ${card.highlight} ${
+            className={`rounded-3xl border border-white/15 bg-black/60 p-6 text-left transition-all duration-500 ${card.highlight} ${
               filter === card.value ? 'shadow-glow border-white/40' : 'shadow-innerGlow'
             }`}
           >
@@ -87,18 +87,18 @@ export default function DashboardOverview({ leads, stats }: Props) {
           </motion.button>
         ))}
       </div>
-      <div className="glass rounded-3xl border border-white/10 bg-black/40 p-8 shadow-innerGlow">
+      <div className="surface-panel rounded-3xl p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by client or vehicle"
-            className="w-full rounded-full border border-white/20 bg-black/40 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-xs min-h-12"
+            className="w-full rounded-full border border-white/25 bg-black/60 px-5 py-3 text-sm text-white placeholder:text-silver/40 focus:border-white/60 focus:outline-none sm:max-w-xs min-h-12"
           />
           <GlowButton variant="secondary">Export Leads</GlowButton>
         </div>
-        <div className="mt-8 overflow-x-auto rounded-3xl border border-white/10">
+        <div className="mt-8 overflow-x-auto rounded-3xl border border-white/12 bg-black/50">
           <table className="min-w-full divide-y divide-white/10 text-left text-sm">
             <thead className="bg-white/5 uppercase tracking-[0.35em] text-silver/60">
               <tr>
@@ -110,7 +110,7 @@ export default function DashboardOverview({ leads, stats }: Props) {
             </thead>
             <tbody className="divide-y divide-white/10">
               {filteredLeads.map((lead) => (
-                <tr key={lead.id} className="bg-black/40">
+                <tr key={lead.id} className="bg-black/60">
                   <td className="px-6 py-4 text-white">{lead.name}</td>
                   <td className="px-6 py-4 text-silver/80">{lead.vehicle}</td>
                   <td className="px-6 py-4 text-silver/60">{new Date(lead.createdAt).toLocaleDateString()}</td>

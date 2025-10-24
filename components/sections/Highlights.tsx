@@ -31,7 +31,7 @@ export default function Highlights() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ delay: index * 0.1, duration: 0.7, ease: 'easeOut' }}
-            className="glass card-hover rounded-3xl p-8 shadow-innerGlow"
+            className="card-hover surface-panel rounded-3xl p-8"
           >
             <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/10">
               <item.icon className="h-6 w-6 text-white" />

@@ -6,6 +6,7 @@ import { enrichVehicle, formatCurrency } from '@/lib/vehicles';
 import VehicleGallery from '@/components/sections/VehicleGallery';
 import LuxAudioPlayer from '@/components/ui/LuxAudioPlayer';
 import VehicleEnquiryForm from '@/components/sections/VehicleEnquiryForm';
+import PageBackground from '@/components/layout/PageBackground';
 
 type Props = {
   params: { slug: string };
@@ -66,6 +67,7 @@ export default async function CarDetailsPage({ params }: Props) {
 
   return (
     <section className="section-padding">
+      <PageBackground page="details" />
       <div className="mx-auto max-w-7xl space-y-14 px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <VehicleGallery
@@ -74,7 +76,7 @@ export default async function CarDetailsPage({ params }: Props) {
             priority
             variant="hero"
           />
-          <div className="glass space-y-6 rounded-3xl border border-white/10 bg-black/40 p-8 shadow-innerGlow sm:p-10">
+          <div className="surface-panel-strong space-y-6 rounded-3xl p-8 sm:p-10">
             <p className="text-xs uppercase tracking-[0.55em] text-silver/60">{showroomVehicle.make}</p>
             <h1 className="font-heading text-4xl text-white md:text-5xl">{showroomVehicle.title}</h1>
             <div className="grid grid-cols-2 gap-4 text-xs uppercase tracking-[0.3em] text-silver/60">
@@ -133,7 +135,7 @@ export default async function CarDetailsPage({ params }: Props) {
         <div id="enquiry">
           <VehicleEnquiryForm vehicleId={showroomVehicle.id} vehicleTitle={showroomVehicle.title} />
         </div>
-        <div className="rounded-3xl border border-white/10 bg-black/40 p-10 text-sm text-silver/70">
+        <div className="surface-panel rounded-3xl p-10 text-sm text-silver/70">
           <p>
             Interested in acquiring the {showroomVehicle.title}? Submit a request for a private test drive or connect with our
             acquisition specialists to tailor financing, trade-ins or custom delivery.
