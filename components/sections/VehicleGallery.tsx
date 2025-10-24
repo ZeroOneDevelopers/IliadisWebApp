@@ -5,17 +5,20 @@ import Image from 'next/image';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { SHIMMER_DATA_URL } from '@/lib/images';
+import Lightbox from '@/components/ui/Lightbox';
 
 type Props = {
   images: string[];
   title: string;
   variant?: 'detail' | 'hero';
   priority?: boolean;
+  enableLightbox?: boolean;
 };
 
-export default function VehicleGallery({ images, title, variant = 'detail', priority = false }: Props) {
+export default function VehicleGallery({ images, title, variant = 'detail', priority = false, enableLightbox = false }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -54,6 +57,11 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
     setActiveIndex(Math.max(0, Math.min(images.length - 1, index)));
   }
 
+  const handleSelect = (index: number) => {
+    if (!enableLightbox) return;
+    setLightbox({ open: true, index });
+  };
+
   const aspectClass = variant === 'hero' ? 'aspect-[16/9]' : 'aspect-[4/3] md:aspect-[16/9]';
 
   return (
@@ -67,22 +75,48 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
         ref={containerRef}
         className={clsx('flex snap-x snap-mandatory overflow-x-auto scroll-smooth bg-black/40 no-scrollbar')}
       >
-        {images.map((src, index) => (
-          <div key={`${src}-${index}`} className={clsx('relative w-full flex-shrink-0 snap-start', aspectClass)}>
-            <Image
-              src={src}
-              alt={`${title} image ${index + 1}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
-              quality={90}
-              priority={priority && index === 0}
-              placeholder="blur"
-              blurDataURL={SHIMMER_DATA_URL}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-          </div>
-        ))}
+        {images.map((src, index) =>
+          enableLightbox ? (
+            <button
+              key={`${src}-${index}`}
+              type="button"
+              onClick={() => handleSelect(index)}
+              className={clsx(
+                'relative w-full flex-shrink-0 snap-start',
+                aspectClass,
+                'cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40'
+              )}
+            >
+              <Image
+                src={src}
+                alt={`${title} image ${index + 1}`}
+                fill
+                className="object-cover transition-transform duration-500 hover:scale-[1.01]"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
+                quality={variant === 'hero' ? 95 : 90}
+                priority={priority && index === 0}
+                placeholder="blur"
+                blurDataURL={SHIMMER_DATA_URL}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            </button>
+          ) : (
+            <div key={`${src}-${index}`} className={clsx('relative w-full flex-shrink-0 snap-start', aspectClass)}>
+              <Image
+                src={src}
+                alt={`${title} image ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 50vw"
+                quality={variant === 'hero' ? 95 : 90}
+                priority={priority && index === 0}
+                placeholder="blur"
+                blurDataURL={SHIMMER_DATA_URL}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            </div>
+          )
+        )}
       </div>
       {images.length > 1 && (
         <>
@@ -119,6 +153,9 @@ export default function VehicleGallery({ images, title, variant = 'detail', prio
             <ChevronRightIcon className="h-5 w-5" />
           </button>
         </>
+      )}
+      {enableLightbox && lightbox.open && (
+        <Lightbox images={images} initial={lightbox.index} onClose={() => setLightbox({ open: false, index: 0 })} />
       )}
     </div>
   );

@@ -4,8 +4,13 @@ import { useRef, useState, useTransition } from 'react';
 import Papa from 'papaparse';
 import GlowButton from '@/components/ui/GlowButton';
 import { useRouter } from 'next/navigation';
+import type { Vehicle } from '@prisma/client';
 
-export default function ImportForm() {
+type ImportFormProps = {
+  onImported?: (vehicles: Vehicle[]) => void;
+};
+
+export default function ImportForm({ onImported }: ImportFormProps) {
   const [status, setStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -36,6 +41,14 @@ export default function ImportForm() {
 
           const payload = await response.json();
           setStatus(`Imported ${payload.created} new vehicles, updated ${payload.updated}.`);
+          if (Array.isArray(payload.vehicles)) {
+            const normalised = (payload.vehicles as Vehicle[]).map((vehicle) => ({
+              ...vehicle,
+              createdAt: new Date(vehicle.createdAt),
+              updatedAt: new Date(vehicle.updatedAt)
+            }));
+            onImported?.(normalised);
+          }
           startTransition(() => {
             router.refresh();
           });

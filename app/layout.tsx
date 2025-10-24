@@ -54,29 +54,15 @@ export const metadata: Metadata = {
   }
 };
 
+const bg = (env?: string, fallback?: string) =>
+  env?.trim() ? (env.startsWith('url(') ? env : `url('${env}')`) : fallback ? `url('${fallback}')` : undefined;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const backgroundImageOne = process.env.NEXT_PUBLIC_BG_IMAGE_1;
-  const backgroundImageTwo = process.env.NEXT_PUBLIC_BG_IMAGE_2;
-  const backgroundImageThree = process.env.NEXT_PUBLIC_BG_IMAGE_3;
-
-  const formatAsCssUrl = (value?: string) => {
-    if (!value) {
-      return undefined;
-    }
-
-    const trimmed = value.trim();
-    return trimmed.startsWith('url(') ? trimmed : `url('${trimmed}')`;
-  };
-
   const backgroundStyles: React.CSSProperties & Record<`--${string}`, string> = {};
-  const assignBackground = (key: `--${string}`, value?: string) => {
-    if (value) backgroundStyles[key] = value;
-  };  
 
-
-  assignBackground('--iliadis-bg-1', formatAsCssUrl(backgroundImageOne));
-  assignBackground('--iliadis-bg-2', formatAsCssUrl(backgroundImageTwo));
-  assignBackground('--iliadis-bg-3', formatAsCssUrl(backgroundImageThree));
+  backgroundStyles['--iliadis-bg-1'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_1, '/images/bg/iliadis-bg-1.jpg')!;
+  backgroundStyles['--iliadis-bg-2'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_2, '/images/bg/iliadis-bg-2.jpg')!;
+  backgroundStyles['--iliadis-bg-3'] = bg(process.env.NEXT_PUBLIC_BG_IMAGE_3, '/images/bg/iliadis-bg-3.jpg')!;
 
   const schema = {
     '@context': 'https://schema.org',

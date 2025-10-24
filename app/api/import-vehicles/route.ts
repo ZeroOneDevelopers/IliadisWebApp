@@ -99,5 +99,7 @@ export async function POST(request: Request) {
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/vehicles');
 
-  return NextResponse.json({ created, updated });
+  const vehicles = await prisma.vehicle.findMany({ orderBy: { createdAt: 'desc' } });
+
+  return NextResponse.json({ created, updated, vehicles });
 }

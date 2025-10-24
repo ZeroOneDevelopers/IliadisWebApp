@@ -12,10 +12,9 @@
   );
   --bg-gradient: radial-gradient(1200px 800px at 20% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
     radial-gradient(1000px 700px at 80% -20%, rgba(255, 255, 255, 0.05), transparent 60%);
-  /* Customisable photographic layers (set via CSS custom properties on the <body> element) */
-  --iliadis-bg-1: none;
-  --iliadis-bg-2: none;
-  --iliadis-bg-3: none;
+  --iliadis-bg-1: url('/images/bg/iliadis-bg-1.jpg');
+  --iliadis-bg-2: url('/images/bg/iliadis-bg-2.jpg');
+  --iliadis-bg-3: url('/images/bg/iliadis-bg-3.jpg');
 }
 
 body {
@@ -23,6 +22,13 @@ body {
   position: relative;
   min-height: 100vh;
   background-color: #0b0c10;
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    var(--iliadis-bg-1);
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center top;
+  image-rendering: auto;
 }
 
 body::before,
@@ -46,12 +52,12 @@ body::before {
 
 body::after {
   z-index: -40;
-  background-image: var(--iliadis-bg-1, none), var(--iliadis-bg-2, none), var(--iliadis-bg-3, none);
-  background-position: -10% top, center top, 110% top;
-  background-size: 65%, 55%, 65%;
+  background-image: var(--iliadis-bg-2), var(--iliadis-bg-3);
+  background-position: 15% top, 85% top;
+  background-size: 60%, 55%;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  opacity: 0.32;
+  opacity: 0.28;
   filter: saturate(0.9) contrast(1.05) brightness(0.9);
 }
 
@@ -105,4 +111,24 @@ a:hover {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+.line-clamp-1,
+.line-clamp-2,
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-1 {
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  -webkit-line-clamp: 3;
 }
