@@ -19,14 +19,14 @@ export default function CarCard({ vehicle, index }: { vehicle: ShowroomVehicle; 
     key: `${vehicle.id}-${index}`,
     label: `${vehicle.title} image ${index + 1}`,
     render: () => (
-      <div className="relative h-[230px] w-full overflow-hidden rounded-3xl bg-black sm:h-[260px] lg:h-[280px]">
+      <div className="relative h-[230px] w-full overflow-hidden bg-black sm:h-[260px] lg:h-[280px]">
         <Image
           src={src}
           alt={`${vehicle.title} image ${index + 1}`}
           fill
-          quality={90}
+          quality={94}
           sizes="(max-width:640px) 92vw, (max-width:1024px) 44vw, 30vw"
-          className="object-center"
+          className="object-cover object-center"
           placeholder="blur"
           blurDataURL={SHIMMER_DATA_URL}
           priority={vehicle.featured && index === 0}
@@ -66,7 +66,12 @@ export default function CarCard({ vehicle, index }: { vehicle: ShowroomVehicle; 
         className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl surface-panel-strong transition-shadow duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       >
         <div className="relative z-20">
-          <Carousel slides={slides} ariaLabel={`${vehicle.title} preview images`} className="h-full" />
+          <Carousel
+            slides={slides}
+            ariaLabel={`${vehicle.title} preview images`}
+            className="h-full"
+            controlsClassName="px-4"
+          />
         </div>
         <div className="relative z-10 flex flex-1 flex-col gap-5 px-6 pb-6 pt-6 sm:px-7">
           <div className="space-y-3">

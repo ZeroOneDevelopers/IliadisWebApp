@@ -28,6 +28,7 @@ export default function VehicleGallery({
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
 
   const aspectClass = variant === 'hero' ? 'aspect-[16/9]' : 'aspect-[4/3] md:aspect-[16/9]';
+  const isDetailVariant = variant === 'detail';
   const sizes = useMemo(
     () =>
       variant === 'hero'
@@ -43,10 +44,12 @@ export default function VehicleGallery({
         label: `${title} image ${index + 1}`,
         render: () => {
           const objectFitClass = fit === 'cover' ? 'object-cover' : 'object-contain';
+          const frameBackground = isDetailVariant ? 'bg-[#050505]' : 'bg-black';
           const frame = (
             <div
               className={clsx(
-                'group relative block h-full w-full overflow-hidden rounded-3xl bg-black',
+                'group relative block h-full w-full overflow-hidden rounded-3xl',
+                frameBackground,
                 enableLightbox ? 'focus-within:ring-2 focus-within:ring-white/40' : ''
               )}
             >
@@ -60,12 +63,13 @@ export default function VehicleGallery({
                     'object-center transition-transform duration-500 group-hover:scale-[1.015]'
                   )}
                   sizes={sizes}
-                  quality={variant === 'hero' ? 95 : 92}
+                  quality={variant === 'hero' ? 95 : 94}
                   priority={priority && index === 0}
                   placeholder="blur"
                   blurDataURL={SHIMMER_DATA_URL}
                   loading={priority && index === 0 ? 'eager' : 'lazy'}
                   draggable={false}
+                  style={{ backgroundColor: isDetailVariant ? '#050505' : '#000000' }}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" aria-hidden />
               </div>
