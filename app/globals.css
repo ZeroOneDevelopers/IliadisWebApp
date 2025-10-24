@@ -4,10 +4,55 @@
 
 :root {
   color-scheme: dark;
+  /* Global app background layers */
+  --bg-noise: repeating-conic-gradient(
+    from 45deg,
+    rgba(255, 255, 255, 0.02) 0deg 15deg,
+    rgba(0, 0, 0, 0.02) 15deg 30deg
+  );
+  --bg-gradient: radial-gradient(1200px 800px at 20% -10%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(1000px 700px at 80% -20%, rgba(255, 255, 255, 0.05), transparent 60%);
+  /* Customisable photographic layers (set via CSS custom properties on the <body> element) */
+  --iliadis-bg-1: none;
+  --iliadis-bg-2: none;
+  --iliadis-bg-3: none;
 }
 
 body {
   @apply bg-graphite text-silver font-body antialiased;
+  position: relative;
+  min-height: 100vh;
+  background-color: #0b0c10;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+body::before {
+  z-index: -30;
+  background: var(--bg-gradient), var(--bg-noise);
+  background-size: cover, 300px 300px;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed;
+  mix-blend-mode: soft-light;
+  opacity: 0.95;
+}
+
+body::after {
+  z-index: -40;
+  background-image: var(--iliadis-bg-1, none), var(--iliadis-bg-2, none), var(--iliadis-bg-3, none);
+  background-position: -10% top, center top, 110% top;
+  background-size: 65%, 55%, 65%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.32;
+  filter: saturate(0.9) contrast(1.05) brightness(0.9);
 }
 
 a {
@@ -51,4 +96,13 @@ a:hover {
   background: radial-gradient(circle at 20% 20%, rgba(231, 233, 238, 0.08), transparent 55%),
     radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
     linear-gradient(115deg, rgba(11, 12, 16, 0.8) 0%, rgba(11, 12, 16, 0.2) 100%);
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

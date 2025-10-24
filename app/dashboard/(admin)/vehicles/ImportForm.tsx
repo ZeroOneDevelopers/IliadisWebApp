@@ -1,13 +1,16 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import Papa from 'papaparse';
 import GlowButton from '@/components/ui/GlowButton';
+import { useRouter } from 'next/navigation';
 
 export default function ImportForm() {
   const [status, setStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   async function handleImport(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -33,6 +36,9 @@ export default function ImportForm() {
 
           const payload = await response.json();
           setStatus(`Imported ${payload.created} new vehicles, updated ${payload.updated}.`);
+          startTransition(() => {
+            router.refresh();
+          });
         } catch (error) {
           console.error('Vehicle import failed', error);
           setStatus('Import failed. Please review the CSV and try again.');
@@ -55,7 +61,7 @@ export default function ImportForm() {
       <GlowButton
         type="button"
         variant="secondary"
-        disabled={isLoading}
+        disabled={isLoading || isPending}
         onClick={() => inputRef.current?.click()}
       >
         {isLoading ? 'Importing…' : 'Import CSV'}

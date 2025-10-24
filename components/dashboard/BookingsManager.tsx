@@ -2,7 +2,8 @@
 
 import { useTransition } from 'react';
 import type { Booking, BookingStatus } from '@prisma/client';
-import { updateBookingStatus } from '@/app/dashboard/actions';
+import { deleteBooking, updateBookingStatus } from '@/app/dashboard/actions';
+import { useRouter } from 'next/navigation';
 
 const statuses: BookingStatus[] = ['PENDING', 'SCHEDULED', 'COMPLETED', 'CANCELLED'];
 
@@ -16,13 +17,27 @@ type Props = {
 
 export default function BookingsManager({ bookings }: Props) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   function handleStatusChange(id: string, status: BookingStatus) {
     startTransition(async () => {
       try {
         await updateBookingStatus(id, status);
+        router.refresh();
       } catch (error) {
         console.error('Failed to update booking status', error);
+      }
+    });
+  }
+
+  function handleDelete(id: string) {
+    if (!confirm('Delete this booking?')) return;
+    startTransition(async () => {
+      try {
+        await deleteBooking(id);
+        router.refresh();
+      } catch (error) {
+        console.error('Failed to delete booking', error);
       }
     });
   }
@@ -74,6 +89,14 @@ export default function BookingsManager({ bookings }: Props) {
                         </option>
                       ))}
                     </select>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(booking.id)}
+                      disabled={isPending}
+                      className="ml-3 text-xs uppercase tracking-[0.3em] text-rose-300 transition hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -96,18 +119,28 @@ export default function BookingsManager({ bookings }: Props) {
                   <p>{new Date(booking.date).toLocaleDateString()}</p>
                   <p className="text-silver/50">{booking.startTime} – {booking.endTime}</p>
                 </div>
-                <select
-                  defaultValue={booking.status}
-                  onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
-                  disabled={isPending}
-                  className="mt-2 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
-                >
-                  {statuses.map((status) => (
-                    <option key={status} value={status}>
-                      {status.replace('_', ' ')}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-3">
+                  <select
+                    defaultValue={booking.status}
+                    onChange={(event) => handleStatusChange(booking.id, event.target.value as BookingStatus)}
+                    disabled={isPending}
+                    className="mt-2 w-full rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.3em] text-silver/70 focus:border-white/60 focus:outline-none min-h-12"
+                  >
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status.replace('_', ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(booking.id)}
+                    disabled={isPending}
+                    className="mt-2 text-xs uppercase tracking-[0.3em] text-rose-300 transition hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           ))}

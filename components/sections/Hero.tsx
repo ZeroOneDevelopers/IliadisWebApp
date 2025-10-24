@@ -30,7 +30,7 @@ export default function Hero() {
         playsInline
       />
       <div className="video-overlay absolute inset-0" />
-      <motion.div style={{ y, opacity }} className="relative z-10 section-padding pb-32">
+      <motion.div style={{ y, opacity }} className="relative z-20 section-padding pb-32">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -78,12 +78,14 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 1 }}
-        className="absolute inset-x-0 bottom-10 flex justify-center"
+        className="pointer-events-none absolute inset-x-0 bottom-10 z-10"
       >
-        <div className="flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-silver/70">
-          <span className="h-px w-12 bg-white/40" />
-          Curated for Connoisseurs
-          <span className="h-px w-12 bg-white/40" />
+        <div className="flex justify-center">
+          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-silver/70">
+            <span className="h-px w-12 bg-white/40" />
+            Curated for Connoisseurs
+            <span className="h-px w-12 bg-white/40" />
+          </div>
         </div>
       </motion.div>
     </section>

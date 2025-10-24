@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ShowroomFilters, { FilterState } from '@/components/sections/ShowroomFilters';
 import CarCard from '@/components/sections/CarCard';
 import { motion } from 'framer-motion';
@@ -11,7 +11,10 @@ const initialFilters: FilterState = {
   brand: null,
   fuel: null,
   transmission: null,
-  maxPrice: null
+  priceMin: null,
+  priceMax: null,
+  yearMin: null,
+  yearMax: null
 };
 
 type Props = {
@@ -22,28 +25,41 @@ type Props = {
 };
 
 export default function ShowroomClient({ vehicles, brandOptions, fuelOptions, transmissionOptions }: Props) {
+  const [draftFilters, setDraftFilters] = useState<FilterState>(initialFilters);
   const [filters, setFilters] = useState<FilterState>(initialFilters);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setFilters(draftFilters), 150);
+    return () => clearTimeout(timeout);
+  }, [draftFilters]);
 
   const filteredVehicles = useMemo(() => {
     return vehicles.filter((vehicle) => {
       const matchesBrand = filters.brand ? vehicle.make === filters.brand : true;
       const matchesFuel = filters.fuel ? vehicle.fuel === filters.fuel : true;
       const matchesTransmission = filters.transmission ? vehicle.transmission === filters.transmission : true;
-      const matchesPrice = filters.maxPrice
-        ? filters.maxPrice === 401000
-          ? vehicle.price >= 400000
-          : vehicle.price <= filters.maxPrice
-        : true;
+      const matchesPriceMin = filters.priceMin !== null ? vehicle.price >= filters.priceMin : true;
+      const matchesPriceMax = filters.priceMax !== null ? vehicle.price <= filters.priceMax : true;
+      const matchesYearMin = filters.yearMin !== null ? vehicle.year >= filters.yearMin : true;
+      const matchesYearMax = filters.yearMax !== null ? vehicle.year <= filters.yearMax : true;
 
-      return matchesBrand && matchesFuel && matchesTransmission && matchesPrice;
+      return (
+        matchesBrand &&
+        matchesFuel &&
+        matchesTransmission &&
+        matchesPriceMin &&
+        matchesPriceMax &&
+        matchesYearMin &&
+        matchesYearMax
+      );
     });
   }, [filters, vehicles]);
 
   return (
     <>
       <ShowroomFilters
-        value={filters}
-        onChange={setFilters}
+        value={draftFilters}
+        onChange={setDraftFilters}
         brandOptions={brandOptions}
         fuelOptions={fuelOptions}
         transmissionOptions={transmissionOptions}

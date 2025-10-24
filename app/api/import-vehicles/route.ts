@@ -93,9 +93,11 @@ export async function POST(request: Request) {
     }
   }
 
+  revalidatePath('/');
   revalidatePath('/showroom');
-  revalidatePath('/dashboard/vehicles');
+  revalidatePath('/showroom/[slug]');
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/vehicles');
 
   return NextResponse.json({ created, updated });
 }

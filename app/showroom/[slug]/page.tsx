@@ -1,10 +1,11 @@
-import Image from 'next/image';
 import GlowButton from '@/components/ui/GlowButton';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { enrichVehicle, formatCurrency } from '@/lib/vehicles';
 import VehicleGallery from '@/components/sections/VehicleGallery';
+import LuxAudioPlayer from '@/components/ui/LuxAudioPlayer';
+import VehicleEnquiryForm from '@/components/sections/VehicleEnquiryForm';
 
 type Props = {
   params: { slug: string };
@@ -61,26 +62,18 @@ export default async function CarDetailsPage({ params }: Props) {
     }
   } as const;
 
-  const galleryImages = [showroomVehicle.primaryImage, ...showroomVehicle.secondaryImages].map((src, index) => ({
-    src,
-    alt: `${showroomVehicle.title} gallery image ${index + 1}`
-  }));
+  const galleryImages = [showroomVehicle.primaryImage, ...showroomVehicle.secondaryImages];
 
   return (
     <section className="section-padding">
       <div className="mx-auto max-w-7xl space-y-14 px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl border border-white/10">
-            <Image
-              src={showroomVehicle.primaryImage}
-              alt={showroomVehicle.title}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 60vw"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/10 to-transparent" />
-          </div>
+          <VehicleGallery
+            images={[showroomVehicle.primaryImage, ...showroomVehicle.secondaryImages]}
+            title={showroomVehicle.title}
+            priority
+            variant="hero"
+          />
           <div className="glass space-y-6 rounded-3xl border border-white/10 bg-black/40 p-8 shadow-innerGlow sm:p-10">
             <p className="text-xs uppercase tracking-[0.55em] text-silver/60">{showroomVehicle.make}</p>
             <h1 className="font-heading text-4xl text-white md:text-5xl">{showroomVehicle.title}</h1>
@@ -111,9 +104,7 @@ export default async function CarDetailsPage({ params }: Props) {
                 <p className="mt-1 text-lg text-white">{formatCurrency(showroomVehicle.price)}</p>
               </div>
             </div>
-            <audio controls className="w-full">
-              <source src={showroomVehicle.audioSample ?? '/sounds/rev.mp3'} type="audio/mpeg" />
-            </audio>
+            <LuxAudioPlayer src={showroomVehicle.audioSample ?? '/sounds/rev.mp3'} />
             <p className="text-xs uppercase tracking-[0.3em] text-silver/50">
               Engine audio placeholder — replace with bespoke rev sample from dashboard upload.
             </p>
@@ -124,12 +115,18 @@ export default async function CarDetailsPage({ params }: Props) {
               <GlowButton href="https://wa.me/302101234567" variant="secondary">
                 WhatsApp Concierge
               </GlowButton>
+              <GlowButton href="#enquiry" variant="secondary">
+                Enquire
+              </GlowButton>
             </div>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4" id="gallery">
           <h2 className="font-heading text-2xl text-white">Gallery</h2>
-          <VehicleGallery images={galleryImages} title={showroomVehicle.title} />
+          <VehicleGallery images={galleryImages} title={showroomVehicle.title} variant="detail" />
+        </div>
+        <div id="enquiry">
+          <VehicleEnquiryForm vehicleId={showroomVehicle.id} vehicleTitle={showroomVehicle.title} />
         </div>
         <div className="rounded-3xl border border-white/10 bg-black/40 p-10 text-sm text-silver/70">
           <p>
