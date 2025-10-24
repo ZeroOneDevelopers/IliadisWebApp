@@ -79,7 +79,7 @@ export default async function CarDetailsPage({ params }: Props) {
   return (
     <section className="section-padding">
       <PageBackground page="details" />
-      <div className="mx-auto max-w-7xl space-y-14 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-16 px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
           <VehicleGallery
             images={[showroomVehicle.primaryImage, ...showroomVehicle.secondaryImages]}
@@ -131,17 +131,36 @@ export default async function CarDetailsPage({ params }: Props) {
             </p>
           </div>
         </div>
-        <div className="surface-panel-strong flex flex-col gap-4 rounded-3xl p-8 sm:flex-row sm:flex-wrap sm:p-10">
-          <GlowButton href={`/test-drive?vehicle=${encodeURIComponent(showroomVehicle.title)}`} className="w-full sm:w-auto">
-            Book Test Drive
-          </GlowButton>
-          <GlowButton href="https://wa.me/302101234567" variant="secondary" className="w-full sm:w-auto">
-            WhatsApp Concierge
-          </GlowButton>
-          <GlowButton href="#enquiry" variant="secondary" className="w-full sm:w-auto">
-            Enquire
-          </GlowButton>
-        </div>
+        <section
+          aria-labelledby="vehicle-actions"
+          className="surface-panel-strong rounded-3xl p-8 sm:p-10"
+        >
+          <h2 id="vehicle-actions" className="sr-only">
+            Vehicle actions
+          </h2>
+          <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-center gap-4">
+            <GlowButton
+              href={`/test-drive?vehicle=${encodeURIComponent(showroomVehicle.title)}`}
+              className="w-full sm:w-auto sm:min-w-[200px] lg:flex-1"
+            >
+              Book Test Drive
+            </GlowButton>
+            <GlowButton
+              href="https://wa.me/302101234567"
+              variant="secondary"
+              className="w-full sm:w-auto sm:min-w-[200px] lg:flex-1"
+            >
+              WhatsApp Concierge
+            </GlowButton>
+            <GlowButton
+              href="#enquiry"
+              variant="secondary"
+              className="w-full sm:w-auto sm:min-w-[200px] lg:flex-1"
+            >
+              Enquire
+            </GlowButton>
+          </div>
+        </section>
         {showroomVehicle.description && (
           <div className="mx-auto max-w-4xl space-y-4 rounded-3xl surface-panel p-8 text-silver/70">
             <h2 className="font-heading text-2xl text-white">Vehicle Narrative</h2>
@@ -149,17 +168,17 @@ export default async function CarDetailsPage({ params }: Props) {
           </div>
         )}
         {relatedVehicles.length > 0 && (
-          <div className="space-y-6">
-            <div className="flex items-end justify-between gap-4">
+          <div className="space-y-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.45em] text-silver/60">Curated Suggestions</p>
                 <h2 className="mt-2 font-heading text-2xl text-white">Related Vehicles</h2>
               </div>
-              <GlowButton href="/showroom" variant="secondary" className="whitespace-nowrap">
+              <GlowButton href="/showroom" variant="secondary" className="whitespace-nowrap self-start sm:self-auto">
                 View Full Showroom
               </GlowButton>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-6 pt-2 md:grid-cols-2 xl:grid-cols-3">
               {relatedVehicles.map((item, relatedIndex) => (
                 <CarCard key={item.id} vehicle={item} index={relatedIndex} />
               ))}

@@ -127,10 +127,10 @@ export default function Hero({ slides }: HeroProps) {
         transition={{ delay: 0.8, duration: 1 }}
         className="absolute inset-x-0 bottom-10 z-20 hidden justify-center sm:flex"
       >
-        <div className="pointer-events-none flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-silver/70">
-          <span className="h-px w-12 bg-white/40" />
+        <div className="pointer-events-none flex items-center gap-4 text-xs uppercase tracking-[0.5em] text-white">
+          <span className="h-px w-12 bg-white" />
           Curated for Connoisseurs
-          <span className="h-px w-12 bg-white/40" />
+          <span className="h-px w-12 bg-white" />
         </div>
       </motion.div>
     </section>

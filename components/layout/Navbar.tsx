@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const navLinks = [
@@ -17,6 +17,11 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const menuId = useId();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   // helper: active και για subroutes (π.χ. /dashboard/vehicles)
   const isActive = (href: string) => {
@@ -75,10 +80,11 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden rounded-full border border-white/20 p-2 text-white transition hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          className="md:hidden rounded-full border border-white/20 p-2 text-white transition hover:border-white/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black/60"
           onClick={() => setOpen((prev) => !prev)}
           aria-label="Toggle navigation"
           aria-expanded={open}
+          aria-controls={menuId}
         >
           {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
         </button>
@@ -94,6 +100,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.18 }}
             className="md:hidden"
+            id={menuId}
           >
             <div className="space-y-4 px-6 pb-8 text-sm uppercase tracking-[0.35em]">
               {navLinks.map((link) => {

@@ -229,7 +229,9 @@ export default function Carousel({
               'pointer-events-auto ml-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
               !loop && active === 0 && 'opacity-40'
             )}
-            onClick={() => {
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
               goToPrevious();
             }}
             aria-controls={trackId}
@@ -254,7 +256,9 @@ export default function Carousel({
               'pointer-events-auto mr-3 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 text-white shadow-lg transition hover:border-white/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
               !loop && active === slides.length - 1 && 'opacity-40'
             )}
-            onClick={() => {
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
               goToNext();
             }}
             aria-controls={trackId}
@@ -290,6 +294,7 @@ export default function Carousel({
                 aria-label={`Go to slide ${index + 1}`}
                 aria-controls={trackId}
                 onClick={(event) => {
+                  event.preventDefault();
                   event.stopPropagation();
                   changeSlide(index);
                 }}
