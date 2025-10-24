@@ -68,12 +68,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     return trimmed.startsWith('url(') ? trimmed : `url('${trimmed}')`;
   };
 
-  const backgroundStyles: CSSProperties = {};
-  const assignBackground = (key: string, value?: string) => {
-    if (value) {
-      backgroundStyles[key] = value;
-    }
-  };
+  const backgroundStyles: React.CSSProperties & Record<`--${string}`, string> = {};
+  const assignBackground = (key: `--${string}`, value?: string) => {
+    if (value) backgroundStyles[key] = value;
+  };  
+
 
   assignBackground('--iliadis-bg-1', formatAsCssUrl(backgroundImageOne));
   assignBackground('--iliadis-bg-2', formatAsCssUrl(backgroundImageTwo));
