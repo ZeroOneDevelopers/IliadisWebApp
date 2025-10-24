@@ -74,10 +74,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const backgroundStyles: React.CSSProperties & Record<`--${string}`, string> = {};
 
   const fallbackBackgrounds = {
-    home: "linear-gradient(140deg, rgba(11,12,16,0.95) 0%, rgba(33,36,45,0.8) 45%, rgba(11,12,16,0.92) 100%)",
-    showroom: "linear-gradient(135deg, rgba(11,12,16,0.94) 10%, rgba(24,27,35,0.88) 55%, rgba(11,12,16,0.94) 95%)",
-    details: "linear-gradient(130deg, rgba(8,9,13,0.94) 5%, rgba(17,19,26,0.9) 60%, rgba(8,9,13,0.94) 100%)",
-    dashboard: "linear-gradient(145deg, rgba(9,10,14,0.95) 0%, rgba(28,31,40,0.88) 55%, rgba(9,10,14,0.95) 100%)"
+    home: "url('/images/backgrounds/home.jpg')",
+    showroom: "url('/images/backgrounds/showroom.jpg')",
+    details: "url('/images/backgrounds/details.jpg')",
+    dashboard: "url('/images/backgrounds/dashboard.jpg')",
+    testDrive: "url('/images/backgrounds/test-drive.jpg')"
   } as const;
 
   backgroundStyles['--page-bg-home'] =
@@ -95,11 +96,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   backgroundStyles['--page-bg-dashboard'] =
     bg(process.env.NEXT_PUBLIC_BG_DASHBOARD, process.env.NEXT_PUBLIC_BG_IMAGE_2, fallbackBackgrounds.dashboard) ??
     fallbackBackgrounds.dashboard;
+  backgroundStyles['--page-bg-test-drive'] =
+    bg(process.env.NEXT_PUBLIC_BG_TEST_DRIVE, process.env.NEXT_PUBLIC_BG_IMAGE_2, fallbackBackgrounds.testDrive) ??
+    fallbackBackgrounds.testDrive;
 
   backgroundStyles['--page-overlay-home'] = '0.58';
   backgroundStyles['--page-overlay-showroom'] = '0.6';
   backgroundStyles['--page-overlay-details'] = '0.68';
   backgroundStyles['--page-overlay-dashboard'] = '0.7';
+  backgroundStyles['--page-overlay-test-drive'] = '0.62';
 
   const schema = {
     '@context': 'https://schema.org',
@@ -133,3 +138,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
+
+// REQUIRED ASSETS (not included):
+// public/images/backgrounds/home.jpg
+// public/images/backgrounds/showroom.jpg
+// public/images/backgrounds/details.jpg
+// public/images/backgrounds/test-drive.jpg
+// public/images/backgrounds/dashboard.jpg
