@@ -1,3 +1,7 @@
+export const runtime = 'nodejs';
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 import GlowButton from '@/components/ui/GlowButton';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
@@ -15,12 +19,12 @@ type Props = {
   params: { slug: string };
 };
 
-export const revalidate = 0;
 
-export async function generateStaticParams() {
-  const vehicles = await prisma.vehicle.findMany({ select: { slug: true } });
-  return vehicles.map((vehicle) => ({ slug: vehicle.slug }));
-}
+// export async function generateStaticParams() {
+//   const vehicles = await prisma.vehicle.findMany({ select: { slug: true } });
+//   return vehicles.map((vehicle) => ({ slug: vehicle.slug }));
+// }
+
 
 export async function generateMetadata({ params }: Props) {
   const vehicle = await prisma.vehicle.findUnique({ where: { slug: params.slug } });

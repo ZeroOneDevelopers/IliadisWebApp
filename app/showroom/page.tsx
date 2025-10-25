@@ -1,3 +1,4 @@
+export const runtime = 'nodejs';
 import ShowroomClient from '@/components/sections/ShowroomClient';
 import { prisma } from '@/lib/prisma';
 import { enrichVehicle, getUniqueOptions } from '@/lib/vehicles';
